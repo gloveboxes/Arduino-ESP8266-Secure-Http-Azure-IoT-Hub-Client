@@ -1,4 +1,4 @@
-# Temperature, Pressure and Light Sensor Streaming over HTTPS/REST to Azure IoT Hub or Azure Event Hub
+# Temperature, Pressure and Light Sensor Streaming over HTTPS to Azure IoT Hub or Event Hubs
 
 ## Platform
 
