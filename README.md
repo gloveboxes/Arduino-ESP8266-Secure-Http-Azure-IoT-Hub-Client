@@ -39,13 +39,15 @@ Check out the Azure.ino sketch, the main bit of magic is to create the [Azure Io
         // END: create SAS  
     }
 
-##Cloud Modes
+##AzureClient.ino Project Modes
+
+###Cloud Modes
 
 The project has two Cloud modes that are configured in the main Azure.ino sketch.
 
     CloudMode cloudMode = IoTHub;  // ClodeMode enumeration: IoTHub or EventHub
     
-##Operational Modes
+###Operational Modes
 
 The project has two operational modes that are configured in the main Azure.ino sketch.
 
@@ -53,6 +55,17 @@ The project has two operational modes that are configured in the main Azure.ino 
 
 Use DemoMode if you dont have any physical sensors wired up, the sketch will stream fake temperature, air pressure and light level data to Azure. Use SensorMode if you have
 a BMP085 or BMP180 Temperature and Air Pressure sensor and Light Dependent Resister wired up as per the wiring schema below. 
+
+##NodeMCU ESP8266 EEPROM Configuration
+
+Before uploading the Azure.ino sketch you first need to configure the SetEEPROMConfiguration.ino sketch with one or more Wifi SSIDs/Passwords, the Azure IoT Hub or Event Hub Host Name, the device Id (or policy id for Event Hubs), and the key. Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
+
+
+1. SetEEPROMConfiguration.ino sets the following 
+  * Wi-Fi SSID and password pairs, put in priority order.
+  * Device id, Azure IoT Hub Host name, Key, and geo location.  
+  * Deploy this app to the NodeMCU to write configuration settings to EPROM
+
 
 ##Azure IoT Hub Setup
 
@@ -64,27 +77,15 @@ These are the basic steps to setting to running this project
     1. Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
     2. or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
 
-#NodeMCU ESP8266 EEPROM Configuration
-
-1. SetEEPROMConfiguration.ino.  
-Sets 
-  * Wi-Fi SSID and password pairs, put in priority order.
-  * Device id, Azure IoT Hub Host name, Key, and geo location.  
-  * Deploy this app to the NodeMCU to write configuration settings to EPROM
 
 
-## Schema
+## Data Schema
 
-Streams data in the following JSON formats
+The AzureClient sketch streams data in the following JSON format
 
-
-1. Azure IoT Hub over HTTPS/REST
 
     {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
-    
-2. Azure Event Hub over HTTPS/REST
 
-    {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
 
 ##Physical Board
 
@@ -93,6 +94,7 @@ Streams data in the following JSON formats
 3. [Adafruit Mini 8x8 LED Matrix w/I2C Backpack](http://tronixlabs.com/display/led/matrix/adafruit-mini-8x8-led-matrix-w-i2c-backpack-red-australia/)
 4. 1 x [Light Dependent Resistor](http://tronixlabs.com/sensors/light/ldr/light-dependent-resistor/)
 5. 1 x 10k resistor
+6. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
 
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/IoTHubClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
 
@@ -113,14 +115,3 @@ Add NodeMCU to Arduino IDE
 3. Add ESP8266 Board: Tools -> Board -> Board Manager -> Search ESP8266 -> Install
 4. Select NodeMUC Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module)
 5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to sucessfully flash the device. Faster is better as each time you upload the code to the NodeMCU you are uploading the complete ROM not just your code.
-
-
-
-##Project Files
-
-1. SetEEPROMConfiguration.ino.  
-Sets 
-  * Wi-Fi SSID and password, up to three Wi-Fi/Password pairs must be specified, just repeat Wi-Fi access points if less than three, put in priority order.
-  * Device id, Azure IoT Hub Host name, Key, and geo location.  
-  * Deploy this app to the NodeMCU to write configuration settings to EPROM
-2. IoTHubClient.ino - This is the main application, it will read configuration setting from the EPROM, manages sensor readings and publishing to Azure IoT hub (Event Hub is also supported).
