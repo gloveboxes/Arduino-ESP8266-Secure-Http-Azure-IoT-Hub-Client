@@ -9,8 +9,9 @@ const char* geo = "-33.8745828,151.2067465";  // Sydney Town Hall
 
 // IOT Hub
 const char* host = "MakerDen.azure-devices.net";
-const char* key = "Y6vgTpyRmWR4okguRXwS8a/tTgu0IRKWlUNl/F5Muec=";
-const char* id = "Node02";
+const char* id = "Node01";
+const char* key = "0oCNoO5uQQvCr0rXG+ryn03v6OkEF9Gb8kBN2bacibM=";
+
 
 // Event Hub
 //const char* host = "makerdenww-ns.servicebus.windows.net";
