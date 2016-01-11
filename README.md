@@ -64,7 +64,13 @@ These are the basic steps to setting to running this project
     1. Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
     2. or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
 
+#NodeMCU ESP8266 EEPROM Configuration
 
+1. SetEEPROMConfiguration.ino.  
+Sets 
+  * Wi-Fi SSID and password pairs, put in priority order.
+  * Device id, Azure IoT Hub Host name, Key, and geo location.  
+  * Deploy this app to the NodeMCU to write configuration settings to EPROM
 
 
 ## Schema
