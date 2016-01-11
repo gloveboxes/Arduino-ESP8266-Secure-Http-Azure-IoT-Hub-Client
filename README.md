@@ -5,7 +5,7 @@
 This project implemented on the NodeMCU V2.0 (also known as V1.0) on the ESP8266, ESP-12E chip using V2.0 of the Arduino Firmware.
 
 The ESP8266 is a great commodity priced platform that has really come to life with the support of the [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) project. 
-With release 2.0 the Arduino core for ESP8266 WiFi chip project there is now Secure Client HTTPS (TLS) support. This changes the platform from being meh, great if you dont care about security to viable platform for secure IoT data streaming.
+With release 2.0 the "Arduino core for ESP8266 WiFi chip" project there is now Secure Client HTTPS (TLS) support making this a viable platform for secure IoT data streaming.
 
 Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-nodemcu-arduino-and-azure-event-hub-a33043)" project I've migrated my "[Arduino NodeMCU ESP8266 MQTT](https://github.com/gloveboxes/Arduino-NodeMCU-ESP82886-Mqtt-Client)" project and added IoT Hub support to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
