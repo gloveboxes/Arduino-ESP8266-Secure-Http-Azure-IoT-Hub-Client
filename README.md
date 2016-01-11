@@ -96,7 +96,7 @@ The AzureClient sketch streams data in the following JSON format
 5. 1 x 10k resistor
 6. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
 
-![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/IoTHubClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
+![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
 
     
 ## Software Requirements
