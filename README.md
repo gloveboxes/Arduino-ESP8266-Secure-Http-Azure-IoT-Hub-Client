@@ -81,8 +81,9 @@ After this you deploy the AzureClient sketch which will read this configuration 
 
 1. SetEEPROMConfiguration.ino sets the following 
   * Wi-Fi SSID and password pairs, put in priority order.
-  * Device id, Azure IoT Hub Host name, Key, and geo location.  
-  * Deploy this app to the NodeMCU to write configuration settings to EPROM
+  * Wifi - Is the number of WiFi ssid and password pairs
+  * Geo location of the device
+  * Deploy this app to the NodeMCU to write configuration settings to EEPROM
 
 ##Configure the main AzureClient.ino solution 
 
@@ -142,7 +143,7 @@ The two dev boards that captured my interest are the NodeMCU V2 and the WeMos D1
 1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
 2. [DHT Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht) or the [DHT Pro Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht_pro).
 
-No wiring required, just solder the supplier header pins for the WeMos and the DHT Sensor shield.
+No wiring required, just solder the supplied header pins for the WeMos and the DHT Sensor shield.
 
 ![WeMos D1 Mini](http://www.wemos.cc/wiki/lib/exe/fetch.php?cache=&media=en:d1_mini_esp8266ex_fixled.jpg)
 
@@ -153,7 +154,7 @@ No wiring required, just solder the supplier header pins for the WeMos and the D
 ###Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
-2. WeMos - On Windows and Mac install the latest [CH340G / CH341G Serial/USB chip drivers](http://kiguino.moos.io/2014/12/31/how-to-use-arduino-nano-mini-pro-with-CH340G-on-mac-osx-yosemite.html) 
+2. WeMos - On Windows and Mac install the latest [CH340G / CH341G Serial/USB chip drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
 
 ### Arduino IDE
 
@@ -164,13 +165,11 @@ No wiring required, just solder the supplier header pins for the WeMos and the D
 
 This an awesome plug in for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  Intelisence, auto complete, debugging, it doesn't get much better:)
 
-##Arduino on ESP8266
-[Arduino on ESP8266 Project](https://github.com/esp8266/Arduino)
 
-Add NodeMCU to Arduino IDE
+Add ESP8266 support to the Arduino IDE (and Visual Studio)
 
 1. Add Additional Board Manager URLs: File -> Preferences.  Add http://arduino.esp8266.com/stable/package_esp8266com_index.json 
 2. Restart Arduino IDE
 3. Add ESP8266 Board: Tools -> Board -> Board Manager -> Search ESP8266 -> Install
-4. Select NodeMUC Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module)
-5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to sucessfully flash the device. Faster is better as each time you upload the code to the NodeMCU you are uploading the complete ROM not just your code.
+4. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
+5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to sucessfully flash the device. Faster is better as each time you upload the code to your device you are reflashing the complete ROM not just your code.
