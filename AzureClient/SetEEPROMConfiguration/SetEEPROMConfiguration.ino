@@ -26,7 +26,7 @@ int length;
 
 
 void setup() {
-  Serial.begin(256000);
+  Serial.begin(9600);
   EEPROM.begin(512);
 
   StaticJsonBuffer<1000> jsonBuffer;

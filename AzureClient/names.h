@@ -4,16 +4,38 @@ enum CloudMode {
 };
 
 enum Leds {
-  WifiConnectedLed = D4, PublishingLed = BUILTIN_LED
+  NodeMCULed = D4, StatusLed = BUILTIN_LED
 };
 
-enum OperationMode {
+enum LedState {
+  On,
+  Off
+};
+
+enum SensorMode {
   DemoMode,
-  SensorMode
+  Bmp180Mode,
+  Dht11Mode
+};
+
+enum BoardType {
+  NodeMCU,
+  WeMos
+};
+
+enum DisplayMode {
+  NoDisplay,
+  LedMatrix
+};
+
+enum LightSensor {
+  None,
+  Enabled
 };
 
 struct SensorData{
   float temperature;
+  float humidity;
   int pressure;
   int light;
 };
@@ -31,7 +53,7 @@ struct WiFiConfig {
   unsigned long LastWifiTime = 0;
   int WiFiConnectAttempts = 0;
   int wifiPairs = 0;
-  const char **ssid;
+  const char ** ssid;
   const char **pwd;
 };
 

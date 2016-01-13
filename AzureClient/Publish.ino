@@ -124,6 +124,7 @@ void publishData(SensorData data, const char *geo){
   preamble(root);
   
   root["Celsius"] = data.temperature;
+  root["Humidity"] = data.humidity;
   root["hPa"] = data.pressure;
   root["Light"] = data.light;
 
@@ -150,16 +151,16 @@ void publishToAzure(String data) {
   // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
 
   String request = "POST " + endPoint + " HTTP/1.1\r\n" +
-  "Host: " + cloud.host + "\r\n" +
-  "Authorization: SharedAccessSignature " + fullSas + "\r\n" +
-  "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
-  "Content-Length: " + data.length() + "\r\n\r\n" + data;
+    "Host: " + cloud.host + "\r\n" +
+    "Authorization: SharedAccessSignature " + fullSas + "\r\n" +
+    "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
+    "Content-Length: " + data.length() + "\r\n\r\n" + data;
   
   if (!tlsClient.connected()) { connectToAzure(); }
   
   if (!tlsClient.connected()) { return; }
   
-  digitalWrite(PublishingLed, LOW);
+  setStatusLed(Off);
     
   tlsClient.print(request);
   
@@ -184,7 +185,7 @@ void publishToAzure(String data) {
   if (response.length() > 12) { Serial.println(response.substring(9, 12)); }
   else { Serial.println("unknown"); }
 
-  digitalWrite(PublishingLed, HIGH);
+  setStatusLed(On);
 }
 
 

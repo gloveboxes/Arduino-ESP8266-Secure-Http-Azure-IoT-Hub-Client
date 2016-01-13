@@ -30,44 +30,59 @@
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson
 #include <ESP8266WiFi.h>
 #include <Wire.h>
-#include <Adafruit_BMP085.h>
+#include "Adafruit_BMP085.h"
+#include "DHT.h"
 #include "names.h"
 
+// cloud configurations
+// connection string must be in this format and order
+String connectionString = "HostName=MakerDen.azure-devices.net;DeviceId=Node01;SharedAccessKey=0oCNoO5uQQvCr0rXG+ryn03v6OkEF9Gb8kBN2bacibM=";
+CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
 
-OperationMode opMode = SensorMode;  // OperationMode enumeration: DemoMode or SensorMode
-CloudMode cloudMode = IoTHub;  // ClodeMode enumeration: IoTHub or EventHub
+// device configuration
+BoardType boardType = WeMos;          // BoardType enumeration: NodeMCU or WeMos
+SensorMode sensorMode = Dht11Mode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
+DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
+LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
 
-SensorData data;
+
 CloudConfig cloud;
 WiFiConfig wifiConfig;
+SensorData data;
 
+
+// sensors
 Adafruit_BMP085 bmp;
+
+const int DHTPIN = D4;     // DHT11 shield on pin D4
+#define DHTTYPE DHT11   // DHT 11
+DHT dht(DHTPIN, DHTTYPE);
 
 
 void setup() {  
-	Serial.begin(256000);
+	Serial.begin(9600);
 	delay(100);
 	Serial.println();
 
-  initLed(WifiConnectedLed);
-  initLed(PublishingLed);
+  initLed(StatusLed); 
 
+//  configWifi(wifiSSIDs, wifiPwds);
+  
+  azureConnectionString(connectionString);
+  
 	loadConfigFromEEPROM();
   
-	initialiseAzure(cloudMode);  
-  
-  if (opMode == SensorMode) {
-  	MatrixInit();  // initialise the led matrix display
-    bmp.begin();  //initialise the bmp180 temperature and pressure sensor
-  }
+	initialiseAzure(cloudMode);
+
+  initDevices();
 }
 
 void loop() {  
   getLightReading();
-  getTempPressureReading();
+  getReadings();
   
 	if (WiFi.status() == WL_CONNECTED) {
-	  digitalWrite(WifiConnectedLed, LOW);
+    setStatusLed(On);
 		if (timeStatus() == timeNotSet) {
       Serial.println(WiFi.localIP());
       delay(250);
@@ -77,55 +92,84 @@ void loop() {
 		publishIoTHub();    
   }
 	else {
-    digitalWrite(WifiConnectedLed, HIGH);
+    setStatusLed(Off);
     initWifi();
 	}
 
   displayReadings();
 }
 
+void initDevices(){
+  if (displayMode == LedMatrix) { MatrixInit(); }  // initialise the led matrix display
+  
+  switch(sensorMode){
+    case Bmp180Mode:
+      bmp.begin();
+      break;
+    case Dht11Mode:
+      dht.begin();
+      break;
+  }
+}
+
 void publishIoTHub(){
   unsigned long currentTime = millis(); 
-  if (cloud.lastPublishTime + 20000UL < currentTime) {  // publish rate maximum of once every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
+  if (cloud.lastPublishTime + 20000UL < currentTime) {  // publish rate no more than every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
     cloud.lastPublishTime = currentTime;
     publishData(data, cloud.geo);
   }
 }
 
-void getTempPressureReading() {
-  if (opMode == DemoMode) {
-    data.temperature = 25;
-    data.pressure = 1000;
-    return;
+void getReadings() {
+  switch(sensorMode){
+    case DemoMode:
+      data.temperature = 25;
+      data.humidity = 50;
+      data.pressure = 1000;
+      break;
+    case Bmp180Mode:
+      data.temperature = bmp.readTemperature(); 
+      data.humidity = 0;
+      data.pressure = (int)((int)( bmp.readPressure() + 0.5) / 100);
+      break;
+    case Dht11Mode:
+      float temperature = dht.readTemperature() - 2;  // -2 modest recallibrate
+      float humidity = dht.readHumidity();
+      data.pressure = 0;
+      if (isnan(temperature) || isnan(humidity)) {
+            Serial.println("Failed to read from DHT sensor!");
+      }
+      else {
+        data.temperature = temperature;
+        data.humidity = humidity;
+      }
+      break;
   }
-  
-  data.temperature = bmp.readTemperature(); 
-  data.pressure = (int)((int)( bmp.readPressure() + 0.5) / 100);
 }
 
 void displayReadings(){   
-  if (opMode == DemoMode) {
-    delay(5000); // compensate for no delay from scrolling display
-    return;
+  switch(displayMode){
+    case NoDisplay:
+      delay(5000); // compensate for no delay from scrolling display
+      break;
+    case LedMatrix:
+      int roundedTemp = (int)(data.temperature + 0.5);  
+      ScrollString(" " + String(roundedTemp) + "C " + String(data.pressure) + "hPa", 71);
+      break;   
   }
-   
-  int roundedTemp = (int)(data.temperature + 0.5);  
-  ScrollString(" " + String(roundedTemp) + "C " + String(data.pressure) + "hPa", 71); 
 }
 
 void getLightReading() {
-  if (opMode == DemoMode) {
-    data.light = 50;
-    return;
-  }
-    
-	int r = analogRead(A0);
-	data.light = (int)((float)r / 10.24f);  // convert to a percentage
-
+  if (lightSensor == None) { return; }
+  
+  int r = analogRead(A0);
+  data.light = (int)((float)r / 10.24f);  // convert to a percentage
+  
   setDisplayBrightness((byte)data.light);
 }
 
 void setDisplayBrightness(byte lvl) {
+  if (displayMode != LedMatrix) { return; } 
 	lvl = (lvl % 100) / 15;
 	SetBrightness(lvl);
 }

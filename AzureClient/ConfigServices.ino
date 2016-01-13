@@ -26,9 +26,6 @@ void loadConfigFromEEPROM() {
 	}
 
   wifiConfig.wifiPairs = root["wifi"]; 
-  cloud.host = GetValue(root["host"]);
-  cloud.key = (char*)GetValue(root["key"]);
-  cloud.id = GetValue(root["id"]);
   cloud.geo = GetValue(root["geo"]);
 
   wifiConfig.ssid = new const char*[wifiConfig.wifiPairs];
@@ -41,9 +38,10 @@ void loadConfigFromEEPROM() {
 	}
 }
 
-const char *GetValue(const char* value){
-    char *temp = new char[strlen(value) + 1];
-    strcpy(temp, value);
-    return temp;
+void azureConnectionString(String cs){
+  cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
+  cloud.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
+  cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
 }
+
 
