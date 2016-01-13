@@ -3,7 +3,7 @@
 ## Platform
 
 This project implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
-[WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) developement boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
+[WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) development boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
 [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware.  The solution can stream data securely directly to 
 [Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/] or [Azure Event Hub]() over HTTPS calling Azure REST APIs.  
 
@@ -111,7 +111,7 @@ The AzureClient sketch streams data in the following JSON format, of course you 
 
 ##Azure IoT Hub and Azure Event Hub
 
-Ok, so you've read this far and you maybe wondering what is Azure IoT Hub and Azure Event Hub.  
+Ok, so you've read this far and you may be wondering what is Azure IoT Hub and Azure Event Hub.  
 
 IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
 designed for internet scale data ingestion. Unlock the value of that data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
@@ -121,7 +121,7 @@ designed for internet scale data ingestion. Unlock the value of that data with [
 ##Physical Board
 
 
-The are a number of ESP8266 based development boards available so be sure to check out this great article 
+There are a number of ESP8266 based development boards available so be sure to check out this great article 
 ["Comparison of ESP8266 NodeMCU development boards"](http://frightanic.com/iot/comparison-of-esp8266-nodemcu-development-boards/).
 
 The two dev boards that captured my interest are the NodeMCU V2 and the WeMos D1 Mini and this project supports both.
@@ -163,7 +163,7 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 ### Visual Studio
 
-This an awesome plug in for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  Intelisence, auto complete, debugging, it doesn't get much better:)
+This an fantastic plugin for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  IntelliSence, auto complete, debugging, it doesn't get much better:)
 
 
 Add ESP8266 support to the Arduino IDE (and Visual Studio)
@@ -172,4 +172,4 @@ Add ESP8266 support to the Arduino IDE (and Visual Studio)
 2. Restart Arduino IDE
 3. Add ESP8266 Board: Tools -> Board -> Board Manager -> Search ESP8266 -> Install
 4. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
-5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to sucessfully flash the device. Faster is better as each time you upload the code to your device you are reflashing the complete ROM not just your code.
+5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
