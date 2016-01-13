@@ -9,7 +9,8 @@
   NodeMCU v2 ESP8266 Development Board 
   http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit
   https://github.com/esp8266/Arduino
-  see pins_arduino.h in the \variants\nodemcu directory
+
+
 
 
   Optionally

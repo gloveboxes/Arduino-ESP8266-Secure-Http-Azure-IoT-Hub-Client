@@ -3,8 +3,11 @@
 ## Platform
 
 This project implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
-[WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform running the
-[Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware and can stream data securely directly to Azure IoT Hub or Azure Event Hub over HTTPS/REST.
+[WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) developement boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
+[Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware.  The solution can stream data securely directly to 
+[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/] or [Azure Event Hub]() over HTTPS calling Azure REST APIs.  
+
+
 
 
 The ESP8266 is a great commodity priced platform that has really come to life with Arduino support.
@@ -45,7 +48,7 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
         // END: create SAS  
     }
 
-##Steps to deploying the solution
+##Overview of steps to deploying the solution
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
@@ -58,9 +61,8 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 
 ##Azure IoT Hub Setup
 
-These are the basic steps to setting to running this project
 
-[Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) (there is a free 8000 message/day limited subscription)
+[Creating an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) (there is a free 8000 message/day limited subscription)
 
 ##Register your Device with IoT Hub
 
@@ -72,7 +74,9 @@ These are the basic steps to setting to running this project
 
 ##NodeMCU ESP8266 EEPROM Configuration
 
-Before uploading the Azure.ino sketch you first need to configure the SetEEPROMConfiguration.ino sketch with one or more Wifi SSIDs/Passwords, the Azure IoT Hub or Event Hub Host Name, the device Id (or policy id for Event Hubs), and the key. Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
+Before uploading the Azure.ino sketch to your NodeMCU or WeMos you first need to configure the SetEEPROMConfiguration.ino sketch with one or more 
+Wifi SSIDs/Passwords and the device geo location. Upload this sketch to burn these settings to the device EEPROM. 
+After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
 
 
 1. SetEEPROMConfiguration.ino sets the following 
@@ -82,7 +86,7 @@ Before uploading the Azure.ino sketch you first need to configure the SetEEPROMC
 
 ##Configure the main AzureClient.ino solution 
 
-
+You need to configure the following settings in the main section on the AzureClient.ino file.
 
     // cloud configurations
     // connection string must be in this format and order
@@ -99,15 +103,29 @@ Before uploading the Azure.ino sketch you first need to configure the SetEEPROMC
 
 ## Data Schema
 
-The AzureClient sketch streams data in the following JSON format
+The AzureClient sketch streams data in the following JSON format, of course you can change this:)
 
 
-    {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
+    {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Humidity":50,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
 
+##Azure IoT Hub and Azure Event Hub
+
+Ok, so you've read this far and you maybe wondering what is Azure IoT Hub and Azure Event Hub.  
+
+IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
+designed for internet scale data ingestion. Unlock the value of that data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
+[Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
+[Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough).
 
 ##Physical Board
 
-###NodeMCU Hardware
+
+The are a number of ESP8266 based development boards available so be sure to check out this great article 
+["Comparison of ESP8266 NodeMCU development boards"](http://frightanic.com/iot/comparison-of-esp8266-nodemcu-development-boards/).
+
+The two dev boards that captured my interest are the NodeMCU V2 and the WeMos D1 Mini and this project supports both.
+
+###NodeMCU V2 Hardware
 
 1. [NodeMCU v2 - Lua based ESP8266 development kit](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
@@ -116,21 +134,35 @@ The AzureClient sketch streams data in the following JSON format
 5. 1 x 10k resistor
 6. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
 
-
-###WeMos Hardware
-
-2. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
-3. [DHT11 Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht)
-
-
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
+
+
+###WeMos D1 Mini Hardware
+
+1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
+2. [DHT Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht) or the [DHT Pro Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht_pro).
+
+No wiring required, just solder the supplier header pins for the WeMos and the DHT Sensor shield.
+
+![WeMos D1 Mini](http://www.wemos.cc/wiki/lib/exe/fetch.php?cache=&media=en:d1_mini_esp8266ex_fixled.jpg)
+
 
     
 ## Software Requirements
 
-1. On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
-2. [Arduino IDE 1.6.5](https://www.arduino.cc/en/Main/Software) As at Dec, 2015, [Arduino 1.6.6 has several issues, so to stick with 1.6.5](http://esp8266.github.io/Arduino/versions/2.0.0/doc/installing.html)
-3. As at Dec 2015, ESP8266 Board Manager 2.0.0 or better required for HTTPS/TLS Secure Client support.
+###Drivers
+
+1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
+2. WeMos - On Windows and Mac install the latest [CH340G / CH341G Serial/USB chip drivers](http://kiguino.moos.io/2014/12/31/how-to-use-arduino-nano-mini-pro-with-CH340G-on-mac-osx-yosemite.html) 
+
+### Arduino IDE
+
+1. [Arduino IDE 1.6.5](https://www.arduino.cc/en/Main/Software) As at Dec, 2015, [Arduino 1.6.6 has several issues, so to stick with 1.6.5](http://esp8266.github.io/Arduino/versions/2.0.0/doc/installing.html)
+2. As at Dec 2015, ESP8266 Board Manager 2.0.0 or better required for HTTPS/TLS Secure Client support.
+
+### Visual Studio
+
+This an awesome plug in for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  Intelisence, auto complete, debugging, it doesn't get much better:)
 
 ##Arduino on ESP8266
 [Arduino on ESP8266 Project](https://github.com/esp8266/Arduino)
