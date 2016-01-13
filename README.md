@@ -18,9 +18,9 @@ Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-no
 I've migrated my "[Arduino NodeMCU ESP8266 MQTT](https://github.com/gloveboxes/Arduino-NodeMCU-ESP82886-Mqtt-Client)" project and added IoT Hub support 
 to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
-Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Publish.ino) sketch, the main bit of magic is to create the [Azure IoT Hub Shared Access Signature](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/#security) from the [Azure IoT Hub Developer Guide](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/). See function createIoTHubSas.
+Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Publish.ino) sketch, the main bit of magic is to create the [Azure IoT Hub Shared Access Signature](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/#security) from the [Azure IoT Hub Developer Guide](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/). See function createIotHubSas.
 
-    String createIoTHubSas(char *key, String url){  
+    String createIotHubSas(char *key, String url){  
         String stringToSign = url + "\n" + expire;
 
         // START: Create signature

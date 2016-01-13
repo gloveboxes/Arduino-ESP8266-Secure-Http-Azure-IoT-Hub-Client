@@ -39,7 +39,7 @@ void initialiseIotHub(){
   String url = urlEncode(cloud.host) + urlEncode(TARGET_URL) + (String)cloud.id;
   endPoint = (String)TARGET_URL + (String)cloud.id + (String)IOT_HUB_END_POINT;
 
-  fullSas =  createIoTHubSas(cloud.key, url);
+  fullSas =  createIotHubSas(cloud.key, url);
 }
 
 void initialiseEventHub() {
@@ -61,7 +61,7 @@ void connectToAzure() {
 	}
 }
 
-String createIoTHubSas(char *key, String url){  
+String createIotHubSas(char *key, String url){  
   String stringToSign = url + "\n" + expire;
 
   // START: Create signature
