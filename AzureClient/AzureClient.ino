@@ -36,12 +36,12 @@
 
 // cloud configurations
 // connection string must be in this format and order
-String connectionString = "HostName=MakerDen.azure-devices.net;DeviceId=Node01;SharedAccessKey=0oCNoO5uQQvCr0rXG+ryn03v6OkEF9Gb8kBN2bacibM=";
+String connectionString = "HostName=MakerDen.azure-devices.net;DeviceId=WeMos01;SharedAccessKey=phKNWLHKTVcn0iF+Plb4kGkohPenDzLg/jFSRyX9s/g=";
 CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
 
 // device configuration
 BoardType boardType = WeMos;          // BoardType enumeration: NodeMCU or WeMos
-SensorMode sensorMode = Dht11Mode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
+SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
 DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
 LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
 
