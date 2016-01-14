@@ -109,7 +109,7 @@ This upload the sketch to your device.
 
 From Device Explorer, head to the Data tab, select your device, enable consumer group then click Monitor.
 
-
+![IoT Hub Data](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/IoTHubData.JPG)
 
 ## Data Schema
 
