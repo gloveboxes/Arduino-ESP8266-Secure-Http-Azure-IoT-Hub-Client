@@ -5,7 +5,7 @@
 This project implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
 [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) development boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
 [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware.  The solution can stream data securely directly to 
-[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/] or [Azure Event Hub]() over HTTPS calling Azure REST APIs.  
+[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.  
 
 
 
