@@ -53,7 +53,8 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
 3. Flash the EEPROM with Wifi and Geolocation data.
-4. Update the main AzureClient.ino file with your Azure IoT Hub or Event Hub connection string.
+4. Update the main AzureClient.ino sketch
+    * Add your Azure IoT Hub or Event Hub connection string.
     * Define what platform you are targeting - NodeMCU or WeMos.
     * What sensors you are using, if any - options are DemoMode, bmp180 or dht11 sensors.
 5. Deploy the solution to either your NodeMCU or WeMos devices.
@@ -66,13 +67,13 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 
 ##Register your Device with IoT Hub
 
-2. Register Devices for your newly created IoT Hub. 
+Register Devices for your newly created IoT Hub. 
 
-    1. Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
-    2. or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
+* Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
+* or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
 
 
-##NodeMCU ESP8266 EEPROM Configuration
+##NodeMCU or WeMos EEPROM Configuration
 
 Before uploading the Azure.ino sketch to your NodeMCU or WeMos you first need to configure the SetEEPROMConfiguration.ino sketch with one or more 
 Wifi SSIDs/Passwords and the device geo location. Upload this sketch to burn these settings to the device EEPROM. 
@@ -163,13 +164,19 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 ### Visual Studio
 
-This an fantastic plugin for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  IntelliSence, auto complete, debugging, it doesn't get much better:)
+There an fantastic plugin for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  IntelliSence, auto complete, debugging, it doesn't get much better:)
 
+###Installing ESP8266 support with the Arduino Boards Manager
 
-Add ESP8266 support to the Arduino IDE (and Visual Studio)
+Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager. We have packages available for Windows, Mac OS, and Linux (32 and 64 bit).
 
-1. Add Additional Board Manager URLs: File -> Preferences.  Add http://arduino.esp8266.com/stable/package_esp8266com_index.json 
-2. Restart Arduino IDE
-3. Add ESP8266 Board: Tools -> Board -> Board Manager -> Search ESP8266 -> Install
-4. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
-5. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
+1. Install Arduino 1.6.5 from the Arduino website.
+2. Start Arduino and open Preferences window.
+3. Enter  http://arduino.esp8266.com/stable/package_esp8266com_index.json  into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
+4. Open Boards Manager from Tools > Board menu and install esp8266 platform (and don't forget to select your ESP8266 board from Tools > Board menu after installation).
+5. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
+6. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
+
+##ESP8266 Arduino Core Documentation 
+
+Be sure to read the [ESP8266 Arduino Core Documentation](http://esp8266.github.io/Arduino/versions/2.0.0/) - there are some minor gotchas.
