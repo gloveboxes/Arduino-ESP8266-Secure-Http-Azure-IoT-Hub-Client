@@ -1,5 +1,7 @@
 # Temperature, Pressure and Light Sensor Streaming over HTTPS to Azure IoT Hub or Event Hubs
 
+All parts are readily available from various sources including online electronics stores, ebay, aliexpress...
+
 ## Platform
 
 This project implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
