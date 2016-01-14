@@ -155,7 +155,7 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 ###Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
-2. WeMos - On Windows and Mac install the latest [CH340G / CH341G Serial/USB chip drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
+2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
 
 ### Arduino IDE
 
