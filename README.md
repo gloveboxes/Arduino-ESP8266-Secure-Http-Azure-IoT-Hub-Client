@@ -70,6 +70,9 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 Register Devices for your newly created IoT Hub. 
 
 * Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
+
+![DeviceExplorer]()
+
 * or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
 
 
@@ -83,6 +86,7 @@ After this you deploy the AzureClient sketch which will read this configuration 
 1. SetEEPROMConfiguration.ino sets the following 
   * Wi-Fi SSID and password pairs, put in priority order.
   * Wifi - Is the number of WiFi ssid and password pairs
+  * Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key.  For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
   * Geo location of the device
   * Deploy this app to the NodeMCU to write configuration settings to EEPROM
 
@@ -91,8 +95,6 @@ After this you deploy the AzureClient sketch which will read this configuration 
 You need to configure the following settings in the main section on the AzureClient.ino file.
 
     // cloud configurations
-    // connection string must be in this format and order
-    String connectionString = "HostName=MakerDen.azure-devices.net;DeviceId=WeMos01;SharedAccessKey=phABCDEFTVcn0iF+G10veb0xGkohDavezLg/jFSRyX9s/g=";
     CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
 
     // device configuration

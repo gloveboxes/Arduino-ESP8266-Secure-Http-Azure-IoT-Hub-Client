@@ -36,8 +36,6 @@
 #include "names.h"
 
 // cloud configurations
-// connection string must be in this format and order
-String connectionString = "HostName=MakerDen.azure-devices.net;DeviceId=WeMos01;SharedAccessKey=phKNWLHKTVcn0iF+Plb4kGkohPenDzLg/jFSRyX9s/g=";
 CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
 
 // device configuration
@@ -65,22 +63,17 @@ void setup() {
 	delay(100);
 	Serial.println();
 
-  initLed(StatusLed); 
-
-//  configWifi(wifiSSIDs, wifiPwds);
-  
-  azureConnectionString(connectionString);
-  
 	loadConfigFromEEPROM();
   
 	initialiseAzure(cloudMode);
-
+ 
+  initLed(StatusLed); 
   initDevices();
 }
 
 void loop() {  
   getLightReading();
-  getReadings();
+  getWeatherReadings();
   
 	if (WiFi.status() == WL_CONNECTED) {
     setStatusLed(On);
@@ -121,7 +114,7 @@ void publishIoTHub(){
   }
 }
 
-void getReadings() {
+void getWeatherReadings() {
   switch(sensorMode){
     case DemoMode:
       data.temperature = 25;

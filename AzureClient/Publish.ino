@@ -49,14 +49,16 @@ void initialiseEventHub() {
 }
 
 void connectToAzure() {
-  delay(1000); // give network connection a moment to settle
+  delay(500); // give network connection a moment to settle
+  Serial.print("Connecting to ");
+  Serial.println(cloud.host);
   if (WiFi.status() != WL_CONNECTED) { return; }
  	if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
-		Serial.println("tls host connection failed");
+		Serial.println("Host connection failed");
 		delay(5000);
 	}
 	else {
-		Serial.println("tls host connected");
+		Serial.println("Host connected");
     delay(250); // give network connection a moment to settle
 	}
 }
