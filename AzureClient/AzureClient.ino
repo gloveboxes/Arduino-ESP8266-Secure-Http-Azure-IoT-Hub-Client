@@ -40,7 +40,7 @@ CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventH
 
 // device configuration
 BoardType boardType = WeMos;          // BoardType enumeration: NodeMCU or WeMos
-SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
+SensorMode sensorMode = Dht11Mode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
 DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
 LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
 

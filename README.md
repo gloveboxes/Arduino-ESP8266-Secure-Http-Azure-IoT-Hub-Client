@@ -1,15 +1,13 @@
 # Temperature, Pressure and Light Sensor Streaming over HTTPS to Azure IoT Hub or Event Hubs
 
-All parts are readily available from various sources including online electronics stores, ebay, aliexpress...
+All components are readily available from various sources including online electronics stores, ebay, aliexpress...
 
 ## Platform
 
-This project implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
+This project is implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
 [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) development boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
 [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware.  The solution can stream data securely directly to 
 [Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.  
-
-
 
 
 The ESP8266 is a great commodity priced platform that has really come to life with Arduino support.
@@ -54,12 +52,12 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
-3. Flash the EEPROM with Wifi and Geolocation data.
+3. Flash the EEPROM with Wifi, Geo location, plus ther Azure IoT Hub (or Event Hub) host, device id and key.
 4. Update the main AzureClient.ino sketch
-    * Add your Azure IoT Hub or Event Hub connection string.
     * Define what platform you are targeting - NodeMCU or WeMos.
     * What sensors you are using, if any - options are DemoMode, bmp180 or dht11 sensors.
 5. Deploy the solution to either your NodeMCU or WeMos devices.
+6. View data with Device Explorer
 
 
 ##Azure IoT Hub Setup
@@ -104,6 +102,12 @@ You need to configure the following settings in the main section on the AzureCli
     SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode (if no sensors attached), Bmp180Mode (bmp085 and bmp180), Dht11Mode
     DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
     LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
+
+This upload the sketch to your device.
+
+##Viewing Data
+
+From Device Explorer, head to the Data tab, select your device, enable consumer group then click Monitor.
 
 
 
