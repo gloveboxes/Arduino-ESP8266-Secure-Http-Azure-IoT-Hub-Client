@@ -37,12 +37,17 @@
   
 
   LIBRARIES: Install Arduino Libraries from Sketch -> Include Library -> Manage Libraries
-
   - ArduinoJson
-  - BMP085 (DON’T install the unified version)
+  - Adafruit BMP085 (DON’T install the unified version)
   - Adafruit LED Backpack
   - Adafruit GFX
   - DHT (DON’T install the unified version)
+  - Time
+  
+  As at Jan 2016 download Zip from github for the Adafruit LED Backpack and GFX libraries as there are issues with the online Library Manager versions
+  Arduino IDE Sketch -> Include Library -> Add Zip Library 
+  - Adafruit_LEDBackpack : https://github.com/adafruit/Adafruit-LED-Backpack-Library
+  - Adafruit_GFX         : https://github.com/adafruit/Adafruit-GFX-Library
   
 
   SAMPLE CONFIGURATION:
