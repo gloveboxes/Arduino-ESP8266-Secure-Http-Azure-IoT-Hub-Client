@@ -42,10 +42,17 @@ void loadConfigFromEEPROM() {
 	}
 }
 
-//void azureConnectionString(String cs){
-//  cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
-//  cloud.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
-//  cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
-//}
+void configIotHubClient(String cs, const char *ssid, const char *pwd, const char *geo){
+  wifiConfig.wifiPairs = 1;
+  wifiConfig.ssid = new const char*[wifiConfig.wifiPairs];
+  wifiConfig.pwd = new const char*[wifiConfig.wifiPairs];
+  wifiConfig.ssid[0] = ssid;
+  wifiConfig.pwd[0] = pwd;
+  cloud.geo = geo;
+  
+  cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
+  cloud.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
+  cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
+}
 
 

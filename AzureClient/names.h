@@ -4,7 +4,7 @@ enum CloudMode {
 };
 
 enum Leds {
-  NodeMCULed = D4, StatusLed = BUILTIN_LED
+  StatusLed = BUILTIN_LED
 };
 
 enum LedState {
@@ -28,10 +28,10 @@ enum DisplayMode {
   LedMatrix
 };
 
-enum LightSensor {
-  None,
-  Enabled
-};
+//enum LightSensor {
+//  None,
+//  Enabled
+//};
 
 struct SensorData{
   float temperature;

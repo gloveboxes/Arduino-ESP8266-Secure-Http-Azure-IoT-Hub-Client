@@ -1,29 +1,87 @@
 /*
-  Air Temperature and Pressure plus Light Sensor Streaming over HTTPS/REST to Azure IoT Hub or Azure Event Hub
+  README  
 
-  Describe what it does in layman's terms.  Refer to the components
-  attached to the various pins.
+  PROJECT OWNER: Dave Glover | dglover@microsoft.com | @dglover
 
-  The circuit:
+  COPYRIGHT: Free to use, reuse and modify, no libability accepted
+
+  CREATED: Jan 2016
+
+  SUMMARY: 
+  This project was implemented and tested on the NodeMCU V2 (also known as V1.0) and WeMos D1 Mini development boards on the ESP8266 platform 
+  flashed with Arduino core for ESP8266 WiFi chip V2.0 firmware. It should work in "DemoMode" across all ESP8266 Development boards.
   
-  NodeMCU v2 ESP8266 Development Board 
-  http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit
-  https://github.com/esp8266/Arduino
-
-
-
-
-  Optionally
-  BMP180 Barometric Pressure Sensor
-  3.Adafruit Mini 8x8 LED Matrix w/I2C Backpack
-  4.1 x Light Dependent Resistor
-  5.1 x 10k resistor
-
-  Circuit layout at https://github.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client
+  This solution streams sensor data securely over HTTPS / REST directly to Azure IoT Hub or Azure Event Hub. 
   
-  Created Jan 2016
-  Dave Glover
-  dglover@microsoft.com
+  The solution has two modes:-
+  1) DemoMode, sensor data is faked, just upload sketch to a standalone ESP8266 Developer Board, no sensors required
+  2) Or with sensors attached
+      - Bmp180Mode: BMP085 or BMP180 Temperature (Centigrade) and Air Pressure
+      - Dht11Mode: DHT11 Temperature and Humidity 
+      - With an LDR attached, light will be measured levels 
+
+
+  Platform: ESP8266
+
+  NodeMCU: http://nodemcu.com/index_en.html#fr_54747661d775ef1a3600009e (This project will reflash the NodeMCU in to the Arduino platform. IMHO LUA not stable)  
+  WeMod D1 Mini: http://www.wemos.cc/wiki/doku.php?id=en:d1_mini
+  Other ESP8266 Development Boards - Adafruit, Sparkfun and others
+  
+
+  FIRMWARE: Arduino core for ESP8266 WiFi chip V2.0 | https://github.com/esp8266/Arduino    
+
+  ARDUINO IDE: 4.6.5 (as at Jan 2016)
+  
+  - ESP8266 V2 requires Arduino IDE 4.6.5 (high versions will result is scope compiler errors
+  - http://esp8266.github.io/Arduino/versions/2.0.0/doc/installing.html
+  
+
+  LIBRARIES: Install Arduino Libraries from Sketch -> Include Library -> Manage Libraries
+
+  - ArduinoJson
+  - BMP085 (DON’T install the unified version)
+  - Adafruit LED Backpack
+  - Adafruit GFX
+  - DHT (DON’T install the unified version)
+  
+
+  SAMPLE CONFIGURATION:
+
+  No sensors required, no display, creates fake temperature, air pressure and humidity
+  
+  // device configuration
+  SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
+  DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix 
+  
+
+  DRIVERS:
+  
+  - NodeMCU - On Windows, Mac and Linux you will need to install the latest CP210x USB to UART Bridge VCP Drivers. (https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
+  - WeMos - On Windows and Mac install the latest Ch340G drivers. No drivers required for Linux. (http://www.wemos.cc/wiki/doku.php?id=en:ch340g)
+
+
+  ESP8266 ARDUINO IDE SUPPORT:
+
+  1. Install Arduino 1.6.5 from the Arduino website.
+  2. Start Arduino and open Preferences window.
+  3. Enter http://arduino.esp8266.com/stable/package_esp8266com_index.json into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
+  4. RESTART Arduino IDE
+  5. Open Boards Manager from Tools > Board -> Boards Manager. Search for ESP8266 and install.
+  6. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board  -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
+  7. Set Port and Upload Speed: Tools. Note, you may need to try different port speeds to successfully flash the device. 
+     - Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code, but faster can be less reliable.
+     
+
+  OPTIONAL COMPONENTS:
+  
+  Circuit Layout at https://github.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client
+  
+  - BMP180 Barometric Pressure Sensor
+  - Adafruit Mini 8x8 LED Matrix w/I2C Backpack
+  - Light Dependent Resistor
+  - 10k resistor
+
+  - WeMos Di Mini DHT(11) Shield: http://www.wemos.cc/wiki/doku.php?id=en:dht
 
 */
 
@@ -36,13 +94,11 @@
 #include "names.h"
 
 // cloud configurations
-CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
+CloudMode cloudMode = IoTHub;         // CloudMode enumeration: IoTHub or EventHub
 
 // device configuration
-BoardType boardType = WeMos;          // BoardType enumeration: NodeMCU or WeMos
-SensorMode sensorMode = Dht11Mode;    // OperationMode enumeration: DemoMode, Bmp180Mode, Dht11Mode
-DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
-LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
+SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode (no sensors, fakes data), Bmp180Mode, Dht11Mode
+DisplayMode displayMode = NoDisplay; // DisplayMode enumeration: NoDisplay or LedMatrix
 
 
 CloudConfig cloud;
@@ -53,7 +109,7 @@ SensorData data;
 // sensors
 Adafruit_BMP085 bmp;
 
-const int DHTPIN = D4;     // DHT11 shield on pin D4
+const int DHTPIN = 2; // GPIO pin 2 = D4 alias on NodeMCU, using gpio pin rather than D4 alias so it compiles against all ESP8266 Development boards.
 #define DHTTYPE DHT11   // DHT 11
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -154,7 +210,7 @@ void displayReadings(){
 }
 
 void getLightReading() {
-  if (lightSensor == None) { return; }
+  if (sensorMode == DemoMode) { return; }
   
   int r = analogRead(A0);
   data.light = (int)((float)r / 10.24f);  // convert to a percentage

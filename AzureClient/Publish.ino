@@ -50,7 +50,8 @@ void initialiseEventHub() {
 
 void connectToAzure() {
   delay(500); // give network connection a moment to settle
-  Serial.print("Connecting to ");
+  Serial.print(cloud.id);
+  Serial.print(" connecting to ");
   Serial.println(cloud.host);
   if (WiFi.status() != WL_CONNECTED) { return; }
  	if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
@@ -146,7 +147,7 @@ void postamble(JsonObject& root){
   root["Geo"] = cloud.geo;  
   root["WiFi"] = wifiConfig.WiFiConnectAttempts;
   root["Mem"] = ESP.getFreeHeap();
-  root["Id"] = sendCount++;
+  root["Id"] = ++sendCount;
 }
 
 void publishToAzure(String data) {
