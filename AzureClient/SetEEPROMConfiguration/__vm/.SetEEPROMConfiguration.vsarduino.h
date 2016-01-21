@@ -5,7 +5,7 @@
 	        all non-arduino files created by visual micro and all visual studio project or solution files can be freely deleted and are not required to compile a sketch (do not delete your own code!).
 	        note: debugger breakpoints are stored in '.sln' or '.asln' files, knowledge of last uploaded breakpoints is stored in the upload.vmps.xml file. Both files are required to continue a previous debug session without needing to compile and upload again
 	
-	Hardware: NodeMCU 1.0 (ESP-12E Module), Platform=esp8266, Package=esp8266
+	Hardware: WeMos D1 R2 & mini, Platform=esp8266, Package=esp8266com
 */
 
 #ifndef _VSARDUINO_H_
@@ -15,10 +15,11 @@
 #define __ets__
 #define ICACHE_FLASH
 #define F_CPU 80000000L
-#define ARDUINO 165
+#define ARDUINO 10607
 #define ARDUINO_ESP8266_ESP12
 #define ARDUINO_ARCH_ESP8266
 #define __cplusplus
+#define __ARM__
 #define __inline__
 #define __asm__(x)
 #define __extension__
@@ -97,5 +98,5 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portOutputRegister(P)
 #define portInputRegister(P)
 #define portModeRegister(P)
-#include <SetEEPROMConfiguration.ino>
+#include <..\SetEEPROMConfiguration\SetEEPROMConfiguration.ino>
 #endif
