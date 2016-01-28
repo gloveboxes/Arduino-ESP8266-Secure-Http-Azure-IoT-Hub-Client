@@ -44,12 +44,10 @@
   REQUIRED LIBRARIES: Install Arduino Libraries from Sketch -> Include Library -> Manage Libraries
   - ArduinoJson
   - Time
-
-  OPTIONAL LIBRARIES:  See AzureClientExtended tab for an example of streaming real sensor data from bmp180 or dht11 sensors and or using an Adafruit Mini 8x8 LED display
-
-  Install Arduino Libraries from Sketch -> Include Library -> Manage Libraries
   - Adafruit BMP085 (DON’T install the unified version)
   - DHT (DON’T install the unified version)
+
+  OPTIONAL LIBRARIES:  See AzureClientExtended tab for an example of streaming real sensor data from bmp180 or dht11 sensors and or using an Adafruit Mini 8x8 LED display
 
   If connecting an Adafruit Mini 8x8 LED Matrix. As at Jan 2016 download Zip from github for the Adafruit LED Backpack and GFX libraries as there are issues with the online Library Manager versions
   Arduino IDE Sketch -> Include Library -> Add Zip Library
@@ -142,10 +140,14 @@ void setup() {
 
 	initLed(getStatusLed(deviceConfig.boardType));
 
+//  initDHT11();
+//  initBmp180();
 }
 
 void loop() {
-	getWeatherReadings();
+  getFakeWeatherReadings();
+//  getDht11Readings();
+//  getBmp180Readings();
 
 	if (WiFi.status() == WL_CONNECTED) {
 		setLedState(getStatusLed(deviceConfig.boardType), On);
@@ -174,7 +176,7 @@ void publishIoTHub() {
 	}
 }
 
-void getWeatherReadings() {
+void getFakeWeatherReadings() {
 	data.temperature = 25;
 	data.humidity = 50;
 	data.pressure = 1000;
