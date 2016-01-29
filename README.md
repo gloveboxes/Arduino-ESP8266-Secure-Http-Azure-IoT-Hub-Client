@@ -1,24 +1,28 @@
 # Temperature, Pressure and Light Sensor Streaming over HTTPS to Azure IoT Hub or Event Hubs
 
-All components are readily available from various sources including online electronics stores, ebay, aliexpress...
 
 ## Platform
 
-This project is implemented on the [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU) and 
-[WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) development boards on the [ESP8266](https://en.wikipedia.org/wiki/ESP8266) platform flashed with
-[Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware.  The solution can stream data securely directly to 
-[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.  
+This project is implemented and tested on the following development boards:-
 
+1. [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU), 
+2. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) 
+3. and [SparkFun ESP8266 Thing](https://www.sparkfun.com/products/13711)
 
-The ESP8266 is a great commodity priced platform that has really come to life with Arduino support.
-With "Arduino core for ESP8266 WiFi chip" Version 2.0 there is now Secure Client HTTPS (TLS) support making this a viable platform for secure IoT data streaming.
+Platform: The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced platform that has really come to life with Arduino support.
 
-Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
+Firmware: Flashed with [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware with HTTPS (TLS) support, making this a viable platform for secure IoT data streaming.
+
+Purpose: The solution can securely stream data directly to 
+[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.
+
+Acknowledgments: Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
 Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-nodemcu-arduino-and-azure-event-hub-a33043)" project 
 I've migrated my "[Arduino NodeMCU ESP8266 MQTT](https://github.com/gloveboxes/Arduino-NodeMCU-ESP82886-Mqtt-Client)" project and added IoT Hub support 
 to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
-Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Publish.ino) sketch, the main bit of magic is to create the [Azure IoT Hub Shared Access Signature](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/#security) from the [Azure IoT Hub Developer Guide](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/). See function createIotHubSas.
+
+Security: Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Publish.ino) sketch, the main bit of magic is to create the [Azure IoT Hub Shared Access Signature](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/#security).
 
     String createIotHubSas(char *key, String url){  
         String stringToSign = url + "\n" + expire;
@@ -52,11 +56,9 @@ Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
-3. Flash the EEPROM with Wifi, Geo location, plus ther Azure IoT Hub (or Event Hub) host, device id and key.
+3. Flash the EEPROM with Wifi, Geo location, plus your Azure IoT Hub (or Event Hub) host, device id and key.
 4. Update the main AzureClient.ino sketch
-    * Define what platform you are targeting - NodeMCU or WeMos.
-    * What sensors you are using, if any - options are DemoMode, bmp180 or dht11 sensors.
-5. Deploy the solution to either your NodeMCU or WeMos devices.
+5. Deploy the solution to either your NodeMCU, WeMos or Sparkfun ESP8266 Dev devices.
 6. View data with Device Explorer
 
 
@@ -92,18 +94,18 @@ After this you deploy the AzureClient sketch which will read this configuration 
 
 ##Configure the main AzureClient.ino solution 
 
-You need to configure the following settings in the main section on the AzureClient.ino file.
+You need to configure the initDeviceConfig() function in the AzureClient.ino file.
 
-    // cloud configurations
-    CloudMode cloudMode = IoTHub;         // ClodeMode enumeration: IoTHub or EventHub
+    // Example device configuration
+    
+    void initDeviceConfig(){
+        deviceConfig.boardType = SparkfunThing;     // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other)
+        deviceConfig.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (defaults to IoTHub)
+        deviceConfig.publishRateInSeconds = 20;     // limits publishing rate to specified seconds (default is 60 seconds)
+        deviceConfig.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+    }
 
-    // device configuration
-    BoardType boardType = WeMos;          // BoardType enumeration: NodeMCU or WeMos
-    SensorMode sensorMode = DemoMode;    // OperationMode enumeration: DemoMode (if no sensors attached), Bmp180Mode (bmp085 and bmp180), Dht11Mode
-    DisplayMode displayMode = NoDisplay;  // DisplayMode enumeration: NoDisplay or LedMatrix
-    LightSensor lightSensor = None;       // LightSensor enumeration: None, Enabled
-
-This upload the sketch to your device.
+Then upload the sketch to your device.
 
 ##Viewing Data
 
