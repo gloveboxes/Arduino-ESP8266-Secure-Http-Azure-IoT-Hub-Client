@@ -109,6 +109,7 @@
 
 */
 
+#include <Wire.h>
 #include <ESP8266WiFi.h>
 #include <Time.h>           // http://playground.arduino.cc/code/time - installed via library manager
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
@@ -120,9 +121,9 @@ SensorData data;
 
 // device configuration
 void initDeviceConfig() {
-	deviceConfig.boardType = Other;             // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+	deviceConfig.boardType = WeMos;             // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
 	deviceConfig.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (defaults to IoTHub)
-	deviceConfig.publishRateInSeconds = 20;     // limits publishing rate to specified seconds (default is 60 seconds)
+	deviceConfig.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 60 seconds)
 	deviceConfig.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
 }
 
@@ -142,12 +143,14 @@ void setup() {
 
 //  initDHT11();
 //  initBmp180();
+//  initBmp280();
 }
 
 void loop() {
   getFakeWeatherReadings();
 //  getDht11Readings();
 //  getBmp180Readings();
+//  getBmp280Readings();
 
 	if (WiFi.status() == WL_CONNECTED) {
 		setLedState(getStatusLed(deviceConfig.boardType), On);
@@ -166,6 +169,7 @@ void loop() {
 		setLedState(getStatusLed(deviceConfig.boardType), Off);
 		initWifi();
 	}
+  yield();
 }
 
 void publishIoTHub() {

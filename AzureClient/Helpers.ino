@@ -1,3 +1,13 @@
+
+float getCalibration(){
+  Serial.println(cloud.id);
+  if (strcmp(cloud.id, "WeMos01") == 0) {return -3.4;}
+  if (strcmp(cloud.id, "WeMos02") == 0) {return -1.2;}
+  if (strcmp(cloud.id, "NodeMCU02") == 0) {return -0.5;}
+  if (strcmp(cloud.id, "Thing01") == 0) {return -2.25;}
+  return 0.0;
+}
+
 void initLed(int pin){
   if (pin == -1) { return; }  // no valid led pin available
   pinMode(pin, OUTPUT);
