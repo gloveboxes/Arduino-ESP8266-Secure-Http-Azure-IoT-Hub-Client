@@ -96,13 +96,13 @@ After this you deploy the AzureClient sketch which will read this configuration 
 
 You need to configure the initDeviceConfig() function in the AzureClient.ino file.
 
-    // Example device configuration
-    
-    void initDeviceConfig(){
-        deviceConfig.boardType = SparkfunThing;     // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other)
-        deviceConfig.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (defaults to IoTHub)
-        deviceConfig.publishRateInSeconds = 20;     // limits publishing rate to specified seconds (default is 60 seconds)
-        deviceConfig.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+
+    void initDeviceConfig() {  // Example device configuration
+        device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+        device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+        cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
+        cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+        cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
     }
 
 Then upload the sketch to your device.
