@@ -34,6 +34,7 @@ struct SensorData{
 };
 
 struct CloudConfig {
+  CloudMode cloudMode = IoTHub;
   const char *host;
   char *key;
   const char *id;
@@ -48,11 +49,11 @@ struct DeviceConfig {
   int wifiPairs = 0;
   const char ** ssid;
   const char **pwd;
-  CloudMode cloudMode = IoTHub;
   BoardType boardType = Other;            // OperationMode enumeration: NodeMCU, WeMos, SparkfunThing, Other
   SensorMode sensorMode = None;           // OperationMode enumeration: DemoMode (no sensors, fakes data), Bmp180Mode, Dht11Mode
   DisplayMode displayMode = NoDisplay;    // DisplayMode enumeration: NoDisplay or LedMatrix
   unsigned int publishRateInSeconds = 60; // defaults to once a minute
+  unsigned int deepSleepSeconds = 0;      // Number of seconds for the ESP8266 chip to deepsleep for.  GPIO16 needs to be tied to RST to wake from deepSleep http://esp8266.github.io/Arduino/versions/2.0.0/doc/libraries.html
 
   // WARNING EXPIRY SET TO 10 YEARS FROM NOW.  
   // Epoch Timestamp Conversion Tool http://www.epochconverter.com/

@@ -1,24 +1,26 @@
 #include "DHT.h"
-const int calibration = 0;
+bool dht11Initialised = false;
 
-const int DHTPIN = 2; // GPIO pin 2 = D4 alias on NodeMCU, using gpio pin rather than D4 alias so it compiles against all ESP8266 Development boards.
-#define DHTTYPE DHT11   // DHT 11
-DHT dht(DHTPIN, DHTTYPE);
+
+const int DHT11PIN = 2; // GPIO pin 2 = D4 alias on NodeMCU, using gpio pin rather than D4 alias so it compiles against all ESP8266 Development boards.
+DHT dht11(DHT11PIN, DHT11);
 
 void initDHT11(){
-  dht.begin();
+  if (dht11Initialised) { return; }
+  
+  dht11.begin();
+  delay(50);
+  
+  dht11Initialised = true;
 }
 
 void getDht11Readings(){
-  float temperature = dht.readTemperature() + calibration;  // -2 modest recallibrate
-  float humidity = dht.readHumidity();
-  data.pressure = 0;
-  if (isnan(temperature) || isnan(humidity)) {
-        Serial.println("Failed to read from DHT sensor!");
-  }
-  else {
-    data.temperature = temperature;
-    data.humidity = humidity;
-  }
+  int retryCount = 0;
+  initDHT11();
+  
+  do {  
+    data.temperature = dht11.readTemperature(); 
+    data.humidity = dht11.readHumidity();
+  } while ((isnan(data.temperature) || isnan(data.humidity)) && ++retryCount < 10);
 }
 

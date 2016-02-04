@@ -25,10 +25,10 @@ void loadConfigFromEEPROM() {
 		return;
 	}
 
-  cloud.host = GetValue(root["host"]);
-  cloud.key = (char*)GetValue(root["key"]);
-  cloud.id = GetValue(root["id"]);
-  cloud.geo = GetValue(root["geo"]);
+  cloudConfig.host = GetValue(root["host"]);
+  cloudConfig.key = (char*)GetValue(root["key"]);
+  cloudConfig.id = GetValue(root["id"]);
+  cloudConfig.geo = GetValue(root["geo"]);
 
 
   deviceConfig.wifiPairs = root["wifi"]; 
@@ -48,11 +48,11 @@ void configIotHubClient(String cs, const char *ssid, const char *pwd, const char
   deviceConfig.pwd = new const char*[deviceConfig.wifiPairs];
   deviceConfig.ssid[0] = ssid;
   deviceConfig.pwd[0] = pwd;
-  cloud.geo = geo;
+  cloudConfig.geo = geo;
   
-  cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
-  cloud.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
-  cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
+  cloudConfig.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
+  cloudConfig.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
+  cloudConfig.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
 }
 
 

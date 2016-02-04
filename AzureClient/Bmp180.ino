@@ -1,23 +1,23 @@
 #include "Adafruit_BMP085.h"
 
 Adafruit_BMP085 bmp;
-
-//My device calibrations
-//WiMos01 -3.4
-//WiMos02 -0.8
-//NodeMCU02 = -0.5
-float bmp180Calibration = -1.1;
+bool bmp180Initialised = false;
+float bmp180Calibration = 0;
 
 
 void initBmp180() {
+  if (bmp180Initialised) { return; }  
+  
   bmp.begin();
-  bmp180Calibration = getCalibration();
-
-  Serial.println(bmp180Calibration);
+  bmp180Calibration = getTemperatureCalibration();
+  
+  bmp180Initialised = true;
 }
 
 void getBmp180Readings(){
-  const int numberOfSamples = 10;
+  const int numberOfSamples = 4;
+
+  initBmp180();
   data.temperature = data.pressure = 0;
    
   for (int c = 0; c < numberOfSamples; c++) {  
@@ -28,7 +28,6 @@ void getBmp180Readings(){
   
   data.temperature /= numberOfSamples;
   data.pressure /= numberOfSamples;
-  data.humidity = 0;
 }
 
 

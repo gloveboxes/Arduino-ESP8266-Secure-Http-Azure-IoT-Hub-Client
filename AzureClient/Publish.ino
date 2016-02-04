@@ -31,28 +31,30 @@ void initialiseAzure(CloudMode cm){
       initialiseEventHub();
       break;
   }
+  Serial.print("sas: ");
+  Serial.println(fullSas);
 }
 
 void initialiseIotHub(){
-  String url = urlEncode(cloud.host) + urlEncode(TARGET_URL) + (String)cloud.id;
-  endPoint = (String)TARGET_URL + (String)cloud.id + (String)IOT_HUB_END_POINT;
+  String url = urlEncode(cloudConfig.host) + urlEncode(TARGET_URL) + (String)cloudConfig.id;
+  endPoint = (String)TARGET_URL + (String)cloudConfig.id + (String)IOT_HUB_END_POINT;
 
-  fullSas =  createIotHubSas(cloud.key, url);
+  fullSas =  createIotHubSas(cloudConfig.key, url);
 }
 
 void initialiseEventHub() {
-  String url = urlEncode("https://")  + urlEncode(cloud.host) + urlEncode(EVENT_HUB_END_POINT);
+  String url = urlEncode("https://")  + urlEncode(cloudConfig.host) + urlEncode(EVENT_HUB_END_POINT);
   endPoint = EVENT_HUB_END_POINT;
-  fullSas = createEventHubSas(cloud.key, url);
+  fullSas = createEventHubSas(cloudConfig.key, url);
 }
 
 void connectToAzure() {
   delay(500); // give network connection a moment to settle
-  Serial.print(cloud.id);
+  Serial.print(cloudConfig.id);
   Serial.print(" connecting to ");
-  Serial.println(cloud.host);
+  Serial.println(cloudConfig.host);
   if (WiFi.status() != WL_CONNECTED) { return; }
- 	if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
+ 	if (!tlsClient.connect(cloudConfig.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
 		Serial.println("Host connection failed");
 		delay(5000);
 	}
@@ -112,7 +114,7 @@ String createEventHubSas(char *key, String url){
   // END: Get base64 of signature
 
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + deviceConfig.sasExpiryDate +"&skn=" + cloud.id;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + deviceConfig.sasExpiryDate +"&skn=" + cloudConfig.id;
   // END: create SAS
 }
   
@@ -137,12 +139,12 @@ void publishData(SensorData data, const char *geo, int statusLed){
 }
 
 void preamble(JsonObject& root){
-  root["Dev"] = cloud.id;
+  root["Dev"] = cloudConfig.id;
   root["Utc"] = GetISODateTime();
 }
 
 void postamble(JsonObject& root){
-  root["Geo"] = cloud.geo;  
+  root["Geo"] = cloudConfig.geo;  
   root["WiFi"] = deviceConfig.WiFiConnectAttempts;
   root["Mem"] = ESP.getFreeHeap();
   root["Id"] = ++sendCount;
@@ -152,13 +154,13 @@ void publishToAzure(String data, int statusLed) {
   // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
 
   String request = "POST " + endPoint + " HTTP/1.1\r\n" +
-    "Host: " + cloud.host + "\r\n" +
+    "Host: " + cloudConfig.host + "\r\n" +
     "Authorization: SharedAccessSignature " + fullSas + "\r\n" +
     "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
     "Content-Length: " + data.length() + "\r\n\r\n" + data;
   
   if (!tlsClient.connected()) { connectToAzure(); }
-  
+
   if (!tlsClient.connected()) { return; }
   
   setLedState(statusLed, Off);
@@ -175,8 +177,7 @@ void publishToAzure(String data, int statusLed) {
       chunk = tlsClient.readStringUntil('\n');
       response += chunk;
     }
-    limit++;
-  } while (chunk.length() > 0 && limit < 100);
+  } while (chunk.length() > 0 && ++limit < 100);
   
   Serial.print(limit);
   Serial.print(" Message ");
