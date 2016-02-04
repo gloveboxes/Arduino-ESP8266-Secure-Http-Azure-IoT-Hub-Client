@@ -174,7 +174,7 @@ void publishToAzure(String data, int statusLed) {
   } while (chunk.length() > 0 && ++limit < 100);
   
   Serial.print(limit);
-  Serial.print(" Message ");
+  Serial.print(" Message(s) ");
   Serial.print(sendCount);
   Serial.print(" Response code: ");
   

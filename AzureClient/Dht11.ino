@@ -1,4 +1,6 @@
 #include "DHT.h"
+
+float dht11Calibration;
 bool dht11Initialised = false;
 
 
@@ -9,6 +11,7 @@ void initDHT11(){
   if (dht11Initialised) { return; }
   
   dht11.begin();
+  dht11Calibration = getTemperatureCalibration();
   delay(50);
   
   dht11Initialised = true;

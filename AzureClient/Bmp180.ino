@@ -23,7 +23,7 @@ void getBmp180Readings(){
   for (int c = 0; c < numberOfSamples; c++) {  
     data.temperature += bmp.readTemperature() + bmp180Calibration;  
     data.pressure += (int)((int)( bmp.readPressure() + 0.5) / 100);
-    delay(1500);
+    delay(500);
   }
   
   data.temperature /= numberOfSamples;

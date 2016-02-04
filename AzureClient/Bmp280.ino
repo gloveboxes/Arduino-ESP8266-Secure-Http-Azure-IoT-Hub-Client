@@ -20,7 +20,7 @@ void initBmp280(){
 
 
 void getBmp280Readings(){
-  const int numberOfSamples = 10;
+  const int numberOfSamples = 4;
 
   initBmp280();
   data.temperature = data.pressure = 0;
@@ -28,7 +28,7 @@ void getBmp280Readings(){
   for (int c = 0; c < numberOfSamples; c++) {  
     data.temperature += bmp280.readTemperature() + bmp280Calibration; 
     data.pressure += (int)((int)( bmp280.readPressure() + 0.5) / 100);
-    delay(1500);
+    delay(500);
   }
   
   data.temperature /= numberOfSamples;

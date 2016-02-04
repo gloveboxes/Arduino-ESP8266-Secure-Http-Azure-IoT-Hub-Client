@@ -1,9 +1,8 @@
 #include "DHT.h"
 
 #define DHTPIN22 2     // what digital pin we're connected to
-#define DHTTYPE22 DHT22   // DHT 22  (AM2302), AM2321
+DHT dht22(DHTPIN22, DHT22);
 
-DHT dht22(DHTPIN22, DHTTYPE22);
 float dht22Calibration;
 bool dht22Initialised = false;
 
