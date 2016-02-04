@@ -2,21 +2,17 @@
 #include "sha256.h"
 #include "Base64.h"
 
+WiFiClientSecure tlsClient;
 
 // Azure IoT Hub Settings
 const char* TARGET_URL = "/devices/";
 const char* IOT_HUB_END_POINT = "/messages/events?api-version=2015-08-15-preview";
 
-// Azure Evet Hub settings
+// Azure Event Hub settings
 const char* EVENT_HUB_END_POINT = "/ehdevices/publishers/nodemcu/messages";
 
 String endPoint;
-String fullSas;
-
-int limit = 0; // limiter for response loop
 int sendCount = 0;
-
-WiFiClientSecure tlsClient;
 
 const int BufferLen = 256;
 char buffer[BufferLen];
@@ -31,30 +27,28 @@ void initialiseAzure(CloudMode cm){
       initialiseEventHub();
       break;
   }
-  Serial.print("sas: ");
-  Serial.println(fullSas);
 }
 
 void initialiseIotHub(){
-  String url = urlEncode(cloudConfig.host) + urlEncode(TARGET_URL) + (String)cloudConfig.id;
-  endPoint = (String)TARGET_URL + (String)cloudConfig.id + (String)IOT_HUB_END_POINT;
+  String url = urlEncode(cloud.host) + urlEncode(TARGET_URL) + (String)cloud.id;
+  endPoint = (String)TARGET_URL + (String)cloud.id + (String)IOT_HUB_END_POINT;
 
-  fullSas =  createIotHubSas(cloudConfig.key, url);
+  cloud.fullSas =  createIotHubSas(cloud.key, url);
 }
 
 void initialiseEventHub() {
-  String url = urlEncode("https://")  + urlEncode(cloudConfig.host) + urlEncode(EVENT_HUB_END_POINT);
+  String url = urlEncode("https://")  + urlEncode(cloud.host) + urlEncode(EVENT_HUB_END_POINT);
   endPoint = EVENT_HUB_END_POINT;
-  fullSas = createEventHubSas(cloudConfig.key, url);
+  cloud.fullSas = createEventHubSas(cloud.key, url);
 }
 
 void connectToAzure() {
   delay(500); // give network connection a moment to settle
-  Serial.print(cloudConfig.id);
+  Serial.print(cloud.id);
   Serial.print(" connecting to ");
-  Serial.println(cloudConfig.host);
+  Serial.println(cloud.host);
   if (WiFi.status() != WL_CONNECTED) { return; }
- 	if (!tlsClient.connect(cloudConfig.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
+ 	if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
 		Serial.println("Host connection failed");
 		delay(5000);
 	}
@@ -65,7 +59,7 @@ void connectToAzure() {
 }
 
 String createIotHubSas(char *key, String url){  
-  String stringToSign = url + "\n" + deviceConfig.sasExpiryDate;
+  String stringToSign = url + "\n" + cloud.sasExpiryDate;
 
   // START: Create signature
   // https://raw.githubusercontent.com/adamvr/arduino-base64/master/examples/base64/base64.ino
@@ -88,7 +82,7 @@ String createIotHubSas(char *key, String url){
   base64_encode(encodedSign, sign, HASH_LENGTH); 
   
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + deviceConfig.sasExpiryDate;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + cloud.sasExpiryDate;
   // END: create SAS  
 }
 
@@ -97,7 +91,7 @@ String createEventHubSas(char *key, String url){
   // https://azure.microsoft.com/en-us/documentation/articles/service-bus-sas-overview/
   // Where to get seconds since the epoch: local service, SNTP, RTC
 
-  String stringToSign = url + "\n" + deviceConfig.sasExpiryDate;
+  String stringToSign = url + "\n" + cloud.sasExpiryDate;
 
   // START: Create signature
   Sha256.initHmac((const uint8_t*)key, 44);
@@ -114,7 +108,7 @@ String createEventHubSas(char *key, String url){
   // END: Get base64 of signature
 
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + deviceConfig.sasExpiryDate +"&skn=" + cloudConfig.id;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + cloud.sasExpiryDate +"&skn=" + cloud.id;
   // END: create SAS
 }
   
@@ -139,13 +133,13 @@ void publishData(SensorData data, const char *geo, int statusLed){
 }
 
 void preamble(JsonObject& root){
-  root["Dev"] = cloudConfig.id;
+  root["Dev"] = cloud.id;
   root["Utc"] = GetISODateTime();
 }
 
 void postamble(JsonObject& root){
-  root["Geo"] = cloudConfig.geo;  
-  root["WiFi"] = deviceConfig.WiFiConnectAttempts;
+  root["Geo"] = cloud.geo;  
+  root["WiFi"] = device.WiFiConnectAttempts;
   root["Mem"] = ESP.getFreeHeap();
   root["Id"] = ++sendCount;
 }
@@ -154,8 +148,8 @@ void publishToAzure(String data, int statusLed) {
   // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
 
   String request = "POST " + endPoint + " HTTP/1.1\r\n" +
-    "Host: " + cloudConfig.host + "\r\n" +
-    "Authorization: SharedAccessSignature " + fullSas + "\r\n" +
+    "Host: " + cloud.host + "\r\n" +
+    "Authorization: SharedAccessSignature " + cloud.fullSas + "\r\n" +
     "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
     "Content-Length: " + data.length() + "\r\n\r\n" + data;
   
@@ -169,11 +163,11 @@ void publishToAzure(String data, int statusLed) {
   
   String response = "";
   String chunk = "";
-  limit = 0;
+  int limit = 1;
   
   do {
     if (tlsClient.connected()) {
-      delay(5);  // give esp8266 firmware networking some time
+      yield(); // give esp8266 firmware some time
       chunk = tlsClient.readStringUntil('\n');
       response += chunk;
     }

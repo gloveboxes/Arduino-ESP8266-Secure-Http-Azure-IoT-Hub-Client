@@ -11,7 +11,7 @@ void setLedState(int pin, LedState state){
 }
 
 int getStatusLed(BoardType boardType){
-  if (deviceConfig.boardType == WeMos && deviceConfig.sensorMode == Dht11ShieldMode) { return -1; }   // if wemos using the dht11 temperature and humidity shield set invalid pin as the uses pin D4, the same as the onboard led
+  if (device.boardType == WeMos && device.sensorMode == Dht11ShieldMode) { return -1; }   // if wemos using the dht11 temperature and humidity shield set invalid pin as the uses pin D4, the same as the onboard led
   
   switch (boardType){
     case NodeMCU:

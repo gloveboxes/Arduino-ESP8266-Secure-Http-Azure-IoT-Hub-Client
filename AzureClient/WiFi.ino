@@ -5,19 +5,19 @@ void initWifi(){
   
   if (WiFi.status() == WL_CONNECTED) {return;}  
 
-  if (deviceConfig.LastWifiTime >  millis() ) {
+  if (device.LastWifiTime >  millis() ) {
     delay(500);    
     return;
   }  
 
-  if (deviceConfig.WifiIndex >= deviceConfig.wifiPairs) {deviceConfig.WifiIndex = 0;}
+  if (device.WifiIndex >= device.wifiPairs) {device.WifiIndex = 0;}
 
-  Serial.println("trying " + String(deviceConfig.ssid[deviceConfig.WifiIndex]));
+  Serial.println("trying " + String(device.ssid[device.WifiIndex]));
 
-  WiFi.begin(deviceConfig.ssid[deviceConfig.WifiIndex], deviceConfig.pwd[deviceConfig.WifiIndex]);
+  WiFi.begin(device.ssid[device.WifiIndex], device.pwd[device.WifiIndex]);
   
-  deviceConfig.WiFiConnectAttempts++;
-  deviceConfig.LastWifiTime = millis() + WifiTimeoutMilliseconds;
+  device.WiFiConnectAttempts++;
+  device.LastWifiTime = millis() + WifiTimeoutMilliseconds;
   
-  deviceConfig.WifiIndex++;  //increment wifi indexready for the next ssid/pwd pair in case the current wifi pair dont connect
+  device.WifiIndex++;  //increment wifi indexready for the next ssid/pwd pair in case the current wifi pair dont connect
 }

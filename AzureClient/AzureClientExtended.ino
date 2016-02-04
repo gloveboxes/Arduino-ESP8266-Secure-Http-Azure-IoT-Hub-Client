@@ -21,7 +21,7 @@
 //const unsigned int publishRateInSeconds = 20; // limit publishing rate to specified seconds
 //
 //CloudConfig cloud;
-//WiFiConfig deviceConfig;
+//WiFiConfig device;
 //SensorData data;
 //
 //

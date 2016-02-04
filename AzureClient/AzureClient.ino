@@ -71,10 +71,11 @@
 
   // device configuration in this Arduino Sketch
   void initDeviceConfig(){
-  	cloudConfig.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (defaults to IoTHub)
-  	deviceConfig.boardType = SparkfunThing;     // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other)
-  	deviceConfig.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
-  	deviceConfig.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+    device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+    device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+    cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
+    cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+    cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
   }
 
 
@@ -115,32 +116,40 @@
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
 #include "globals.h"        // global structures and enums used by the applocation
 
-CloudConfig cloudConfig;
-DeviceConfig deviceConfig;
+CloudConfig cloud;
+DeviceConfig device;
 SensorData data;
 
 // device configuration
 void initDeviceConfig() {
-  cloudConfig.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-	deviceConfig.boardType = Other;             // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
-	deviceConfig.publishRateInSeconds = 10;     // limits publishing rate to specified seconds (default is 90 seconds)
-  deviceConfig.deepSleepSeconds = 0; // 3 * 60;     // if greater than zero with call ESP8266 deep sleep (default is 0 seconds disable). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-	deviceConfig.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+	device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+  device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+  cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
+  cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+  cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+}
+
+void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
+  getFakeWeatherReadings();
+//  getDht11Readings();
+//  getDht22Readings();
+//  getBmp180Readings();
+//  getBmp280Readings();
 }
 
 void setup() {
 
 	Serial.begin(9600);
 	delay(100);
-	Serial.println("hello");
+	Serial.println("");
 
 	initDeviceConfig();
 
 	loadConfigFromEEPROM();
 
-	initialiseAzure(cloudConfig.cloudMode);
+	initialiseAzure(cloud.cloudMode);
 
-	initLed(getStatusLed(deviceConfig.boardType));
+	initLed(getStatusLed(device.boardType));
 
 }
 
@@ -150,7 +159,7 @@ void loop() {
   measureSensor();
 
 	if (WiFi.status() == WL_CONNECTED) {
-		setLedState(getStatusLed(deviceConfig.boardType), On);
+		setLedState(getStatusLed(device.boardType), On);
     
     ntpRetryCount = 0;
     while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
@@ -158,39 +167,31 @@ void loop() {
       delay(250);
       setSyncProvider(ntpUnixTime);
       setSyncInterval(60 * 60);  
+      delay(250);
     }
 
-    Serial.println(GetISODateTime());
-    
     publish();  
 
-    if (deviceConfig.deepSleepSeconds > 0) {
-      ESP.deepSleep(1000000 * deviceConfig.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
+    if (device.deepSleepSeconds > 0) {
+      ESP.deepSleep(1000000 * device.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
     }
     else {
-      delay(deviceConfig.publishRateInSeconds * 1000);  // limit publishing rate
+      delay(cloud.publishRateInSeconds * 1000);  // limit publishing rate
     }
 	}
 	else {
-    setLedState(getStatusLed(deviceConfig.boardType), Off);
+    setLedState(getStatusLed(device.boardType), Off);
     initWifi();
 	}
   delay(250);
 }
 
-void measureSensor(){
-//  getFakeWeatherReadings();
-//  getDht11Readings();
-  getDht22Readings();
-  getBmp180Readings();
-//  getBmp280Readings();
-}
 
 void publish() {
 	unsigned long currentTime = millis();
-	if (deviceConfig.deepSleepSeconds > 0 || cloudConfig.lastPublishTime + (deviceConfig.publishRateInSeconds * 1000) < currentTime) {  // publish rate no more than every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
-		cloudConfig.lastPublishTime = currentTime;
-		publishData(data, cloudConfig.geo, getStatusLed(deviceConfig.boardType));
+	if (device.deepSleepSeconds > 0 || cloud.lastPublishTime + (cloud.publishRateInSeconds * 1000) < currentTime) {  // publish rate no more than every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
+		cloud.lastPublishTime = currentTime;
+		publishData(data, cloud.geo, getStatusLed(device.boardType));
 	}
 }
 
