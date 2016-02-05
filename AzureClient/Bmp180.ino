@@ -7,7 +7,8 @@ float bmp180Calibration = 0;
 
 void initBmp180() {
   if (bmp180Initialised) { return; }  
-  
+
+  if (device.boardType == SparkfunThing) { Wire.begin(2, 14); } // Sparkfun ESP8266 Thing Dev
   bmp.begin();
   bmp180Calibration = getTemperatureCalibration();
   

@@ -11,15 +11,17 @@ const char* IOT_HUB_END_POINT = "/messages/events?api-version=2015-08-15-preview
 // Azure Event Hub settings
 const char* EVENT_HUB_END_POINT = "/ehdevices/publishers/nodemcu/messages";
 
-String endPoint;
+
 int sendCount = 0;
+char buffer[256];
+bool azureInitialised = false;
+String partialHttpRequest;
 
-const int BufferLen = 256;
-char buffer[BufferLen];
 
-
-void initialiseAzure(CloudMode cm){
-  switch(cm){
+void initialiseAzure(){
+  if (azureInitialised) { return; }
+  
+  switch(cloud.cloudMode){
     case IoTHub:
       initialiseIotHub();
       break;
@@ -27,18 +29,21 @@ void initialiseAzure(CloudMode cm){
       initialiseEventHub();
       break;
   }
+
+  partialHttpRequest = buildPartialHttpRequest();
+
+  azureInitialised = true;
 }
 
 void initialiseIotHub(){
   String url = urlEncode(cloud.host) + urlEncode(TARGET_URL) + (String)cloud.id;
-  endPoint = (String)TARGET_URL + (String)cloud.id + (String)IOT_HUB_END_POINT;
-
+  cloud.endPoint = (String)TARGET_URL + (String)cloud.id + (String)IOT_HUB_END_POINT;
   cloud.fullSas =  createIotHubSas(cloud.key, url);
 }
 
 void initialiseEventHub() {
   String url = urlEncode("https://")  + urlEncode(cloud.host) + urlEncode(EVENT_HUB_END_POINT);
-  endPoint = EVENT_HUB_END_POINT;
+  cloud.endPoint = EVENT_HUB_END_POINT;
   cloud.fullSas = createEventHubSas(cloud.key, url);
 }
 
@@ -113,53 +118,51 @@ String createEventHubSas(char *key, String url){
 }
   
 
-void publishData(SensorData data, const char *geo, int statusLed){
-  int length;
+String serializeData(SensorData data){
   StaticJsonBuffer<300> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
 
-  preamble(root);
-  
+  root["Dev"] = cloud.id;
+  root["Utc"] = GetISODateTime();
   root["Celsius"] = data.temperature;
   root["Humidity"] = data.humidity;
   root["hPa"] = data.pressure;
   root["Light"] = data.light;
-
-  postamble(root);
-  
-  length = root.printTo(buffer, BufferLen);
-
-  publishToAzure((String)buffer, statusLed);
-}
-
-void preamble(JsonObject& root){
-  root["Dev"] = cloud.id;
-  root["Utc"] = GetISODateTime();
-}
-
-void postamble(JsonObject& root){
   root["Geo"] = cloud.geo;  
+
+  //instrumentation
   root["WiFi"] = device.WiFiConnectAttempts;
   root["Mem"] = ESP.getFreeHeap();
   root["Id"] = ++sendCount;
+  
+  root.printTo(buffer, sizeof(buffer));
+
+  return (String)buffer;
 }
 
-void publishToAzure(String data, int statusLed) {
-  // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
-
-  String request = "POST " + endPoint + " HTTP/1.1\r\n" +
+String buildPartialHttpRequest(){
+    return "POST " + cloud.endPoint + " HTTP/1.1\r\n" +
     "Host: " + cloud.host + "\r\n" +
     "Authorization: SharedAccessSignature " + cloud.fullSas + "\r\n" +
     "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
-    "Content-Length: " + data.length() + "\r\n\r\n" + data;
+    "Content-Length: ";
+}
+
+String buildHttpRequest(String data){   
+    return partialHttpRequest + data.length() + "\r\n\r\n" + data;
+}
+
+void publishToAzure() {
+  // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
+
+  initialiseAzure();
   
   if (!tlsClient.connected()) { connectToAzure(); }
-
   if (!tlsClient.connected()) { return; }
   
-  setLedState(statusLed, Off);
+  setLedState(Off);
     
-  tlsClient.print(request);
+  tlsClient.print(buildHttpRequest(serializeData(data)));
   
   String response = "";
   String chunk = "";
@@ -181,7 +184,7 @@ void publishToAzure(String data, int statusLed) {
   if (response.length() > 12) { Serial.println(response.substring(9, 12)); }
   else { Serial.println("unknown"); }
 
-  setLedState(statusLed, On);
+  setLedState(On);
 }
 
 

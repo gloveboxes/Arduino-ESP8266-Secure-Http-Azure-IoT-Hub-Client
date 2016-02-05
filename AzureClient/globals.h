@@ -11,7 +11,7 @@ enum LedState {
 enum SensorMode {
   None,
   Bmp180Mode,
-  Dht11ShieldMode
+  DhtShieldMode
 };
 
 enum BoardType {
@@ -48,6 +48,7 @@ struct CloudConfig {
   const char *geo;
   unsigned long lastPublishTime = 0;
   String fullSas;
+  String endPoint;
 };
 
 struct DeviceConfig {

@@ -1,6 +1,6 @@
 #include <EEPROM.h>
 
-void loadConfigFromEEPROM() {
+void initCloudConfig() {
 	EEPROM.begin(512);
 	char* data;
 	int length;
@@ -42,7 +42,7 @@ void loadConfigFromEEPROM() {
 	}
 }
 
-void configIotHubClient(String cs, const char *ssid, const char *pwd, const char *geo){
+void initCloudConfig(String cs, const char *ssid, const char *pwd, const char *geo){
   device.wifiPairs = 1;
   device.ssid = new const char*[device.wifiPairs];
   device.pwd = new const char*[device.wifiPairs];

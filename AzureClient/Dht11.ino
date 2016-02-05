@@ -12,7 +12,8 @@ void initDHT11(){
   
   dht11.begin();
   dht11Calibration = getTemperatureCalibration();
-  delay(50);
+  device.sensorMode = DhtShieldMode;
+  delay(50);  
   
   dht11Initialised = true;
 }

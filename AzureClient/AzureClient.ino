@@ -47,19 +47,19 @@
   - Adafruit BMP085 (DON’T install the unified version)
   - DHT (DON’T install the unified version)
 
-  OPTIONAL LIBRARIES:  See AzureClientExtended tab for an example of streaming real sensor data from bmp180 or dht11 sensors and or using an Adafruit Mini 8x8 LED display
 
-  If connecting an Adafruit Mini 8x8 LED Matrix. As at Jan 2016 download Zip from github for the Adafruit LED Backpack and GFX libraries as there are issues with the online Library Manager versions
-  Arduino IDE Sketch -> Include Library -> Add Zip Library
-  - Adafruit_LEDBackpack : https://github.com/adafruit/Adafruit-LED-Backpack-Library
-  - Adafruit_GFX         : https://github.com/adafruit/Adafruit-GFX-Library
+  CLOUD CONFIGURATION:
+
+  The method initCloudConfig() called in setup has two signatures
+
+  1. initCloudConfig() with no parameters reads prepopulated configuration information from the EEPROM
+  2. initCloudConfig("IoT hub device connection string", "WiFi SSID (Case Sensitive)", "WiFi password", "Geo location of the device")
+
+  eg initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=DeviceID;SharedAccessKey=Device Key", "SSID", "Password", "Sydney");
 
 
-  EEPROM CONFIGURATION:
-
-  You MUST configure the device EEPROM before uploading the Azure.ino sketch.
-
-  SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder writes the following settings to the device EEPROM
+  If loading from EEPROM then 
+  - Open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables
   - Wi-Fi SSID and password pairs, put in priority order.
   - Wifi - Is the number of WiFi ssid and password pairs
   - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
@@ -124,32 +124,19 @@ void initDeviceConfig() { // Example device configuration
   device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-  cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+  cloud.publishRateInSeconds = 60;     // limits publishing rate to specified seconds (default is 90 seconds)
   cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
 }
 
-void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
-  getFakeWeatherReadings();
-//  getDht11Readings();
-//  getDht22Readings();
-//  getBmp180Readings();
-//  getBmp280Readings();
-}
+
 
 void setup() {
-
 	Serial.begin(9600);
 	delay(100);
 	Serial.println("");
 
 	initDeviceConfig();
-
-	loadConfigFromEEPROM();
-
-	initialiseAzure(cloud.cloudMode);
-
-	initLed(getStatusLed(device.boardType));
-
+	initCloudConfig("HostName=MakerDen.azure-devices.net;DeviceId=ESP8266;SharedAccessKey=xJFsb2qh3PG73h+1NNxYrCFBhO1iSHHVKB64+yn4ci4=", "NCW", "malolos5459", "Sydney");
 }
 
 void loop() {
@@ -158,7 +145,7 @@ void loop() {
   measureSensor();
 
 	if (WiFi.status() == WL_CONNECTED) {
-		setLedState(getStatusLed(device.boardType), On);
+		setLedState(On);
     
     ntpRetryCount = 0;
     while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
@@ -179,18 +166,25 @@ void loop() {
     }
 	}
 	else {
-    setLedState(getStatusLed(device.boardType), Off);
+    setLedState(Off);
     initWifi();
 	}
   delay(250);
 }
 
+void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
+//  getFakeWeatherReadings();
+  getDht11Readings();
+//  getDht22Readings();
+  getBmp180Readings();
+//  getBmp280Readings();
+}
 
 void publish() {
 	unsigned long currentTime = millis();
 	if (device.deepSleepSeconds > 0 || cloud.lastPublishTime + (cloud.publishRateInSeconds * 1000) < currentTime) {  // publish rate no more than every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
 		cloud.lastPublishTime = currentTime;
-		publishData(data, cloud.geo, getStatusLed(device.boardType));
+    publishToAzure();
 	}
 }
 
