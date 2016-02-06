@@ -1,7 +1,6 @@
 
 void initWifi(){
   const int WifiTimeoutMilliseconds = 60000;  // 60 seconds
-  String SSIDs[] = {"NCW", "fred"};
   
   if (WiFi.status() == WL_CONNECTED) {return;}  
 

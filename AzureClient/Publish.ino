@@ -175,11 +175,14 @@ void publishToAzure() {
       response += chunk;
     }
   } while (chunk.length() > 0 && ++limit < 100);
-  
-  Serial.print(limit);
-  Serial.print(" Message(s) ");
+
+  Serial.print("Memory ");
+  Serial.print(ESP.getFreeHeap());
+  Serial.print(", Message ");
   Serial.print(sendCount);
-  Serial.print(" Response code: ");
+  Serial.print(", Response chunks ");
+  Serial.print(limit);
+  Serial.print(", Response code: ");
   
   if (response.length() > 12) { Serial.println(response.substring(9, 12)); }
   else { Serial.println("unknown"); }
