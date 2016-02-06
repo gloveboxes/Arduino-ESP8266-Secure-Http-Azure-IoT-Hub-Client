@@ -12,7 +12,7 @@ void initDht22(){
   dht22.begin();
   dht22Calibration = getTemperatureCalibration();
   device.sensorMode = DhtShieldMode;
-  delay(50);
+  delay(100);
 
   dht22Initialised = true;
 }
