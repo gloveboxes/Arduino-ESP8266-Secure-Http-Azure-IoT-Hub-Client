@@ -23,6 +23,7 @@ void getDht11Readings(){
   initDHT11();
   
   do {  
+    delay(50);
     data.temperature = dht11.readTemperature(); 
     data.humidity = dht11.readHumidity();
   } while ((isnan(data.temperature) || isnan(data.humidity)) && ++retryCount < 10);

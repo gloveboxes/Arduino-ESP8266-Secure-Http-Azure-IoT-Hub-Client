@@ -46,6 +46,8 @@
   - Time
   - Adafruit BMP085 (DON’T install the unified version)
   - DHT (DON’T install the unified version)
+  - Adafruit Sensor
+  - Adafruit BMP280
 
 
   CLOUD CONFIGURATION:
@@ -53,7 +55,7 @@
   The method initCloudConfig() called in setup has two signatures
 
   1. initCloudConfig() with no parameters reads prepopulated configuration information from the EEPROM
-  2. initCloudConfig("IoT hub device connection string", "WiFi SSID (Case Sensitive)", "WiFi password", "Geo location of the device")
+  2. initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device")
 
   eg initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=DeviceID;SharedAccessKey=Device Key", "SSID", "Password", "Sydney");
 
@@ -112,23 +114,23 @@
 
 #include <Wire.h>
 #include <ESP8266WiFi.h>
-#include <Time.h>           // http://playground.arduino.cc/code/time - installed via library manager
+#include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
 #include "globals.h"        // global structures and enums used by the applocation
 
 CloudConfig cloud;
 DeviceConfig device;
 SensorData data;
+int ntpRetryCount;
+IPAddress timeServer(203, 56, 27, 253); // au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-  cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+  cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
   cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
 }
-
-
 
 void setup() {
 	Serial.begin(9600);
@@ -138,13 +140,13 @@ void setup() {
   WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
 
 	initDeviceConfig();
-	initCloudConfig("HostName=MakerDen.azure-devices.net;DeviceId=Study;SharedAccessKey=ly1cZklX5LKeOS4zWVtYzo21TL1swyCx7KsqyPF8gHo=", "dgWAP", "VisualStudio2005", "Melbourne");
+	initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=oH8NYVmQVbFckto98m5h9XXYesslf00mZuFDs89cck0=", "YourSSID", "WiFiPwd", "Sydney");
 //  initCloudConfig();  // alternate signature - read config from EEPROM
+
+  initWifi();
 }
 
 void loop() {
-  int ntpRetryCount = 0;
-
   measureSensor();
 
 	if (WiFi.status() == WL_CONNECTED) {
@@ -153,13 +155,11 @@ void loop() {
     ntpRetryCount = 0;
     while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
       Serial.println(WiFi.localIP());
-      delay(250);
-      setSyncProvider(ntpUnixTime);
+      setSyncProvider(getNtpTime);
       setSyncInterval(60 * 60);  
-      delay(250);
     }
 
-    publish();  
+    publishToAzure();
 
     if (device.deepSleepSeconds > 0) {
       ESP.deepSleep(1000000 * device.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
@@ -171,24 +171,17 @@ void loop() {
 	else {
     setLedState(Off);
     initWifi();
+    delay(250);
 	}
-  delay(250);
 }
 
 void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
-//  getFakeWeatherReadings();
-  getDht11Readings();
+  getFakeWeatherReadings();
+//  getDht11Readings();
 //  getDht22Readings();
-  getBmp180Readings();
+//  getBmp180Readings();
 //  getBmp280Readings();
-}
-
-void publish() {
-	unsigned long currentTime = millis();
-	if (device.deepSleepSeconds > 0 || cloud.lastPublishTime + (cloud.publishRateInSeconds * 1000) < currentTime) {  // publish rate no more than every 20 secs so not to consume IoT Hub 8k message/day free subscription limit
-		cloud.lastPublishTime = currentTime;
-    publishToAzure();
-	}
+//  getLdrReadings(); // when enabled causes the DHT11 sensor to fail 
 }
 
 void getFakeWeatherReadings() {

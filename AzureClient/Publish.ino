@@ -11,11 +11,9 @@ const char* IOT_HUB_END_POINT = "/messages/events?api-version=2015-08-15-preview
 // Azure Event Hub settings
 const char* EVENT_HUB_END_POINT = "/ehdevices/publishers/nodemcu/messages";
 
-
 int sendCount = 0;
 char buffer[256];
 bool azureInitialised = false;
-String partialHttpRequest;
 
 
 void initialiseAzure(){
@@ -29,8 +27,6 @@ void initialiseAzure(){
       initialiseEventHub();
       break;
   }
-
-  partialHttpRequest = buildPartialHttpRequest();
 
   azureInitialised = true;
 }
@@ -53,14 +49,17 @@ void connectToAzure() {
   Serial.print(" connecting to ");
   Serial.println(cloud.host);
   if (WiFi.status() != WL_CONNECTED) { return; }
- 	if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
-		Serial.println("Host connection failed");
-		delay(5000);
-	}
-	else {
-		Serial.println("Host connected");
-    delay(250); // give network connection a moment to settle
-	}
+  if (!tlsClient.connect(cloud.host, 443)) {      // Use WiFiClientSecure class to create TLS connection
+    Serial.print("Host connection failed.  WiFi IP Address: ");
+    Serial.println(WiFi.localIP());
+
+    delay(2000);
+  }
+  else {
+    Serial.println("Host connected");
+    yield(); // give firmware some time 
+//    delay(250); // give network connection a moment to settle
+  }
 }
 
 String createIotHubSas(char *key, String url){  
@@ -119,7 +118,7 @@ String createEventHubSas(char *key, String url){
   
 
 String serializeData(SensorData data){
-  StaticJsonBuffer<300> jsonBuffer;
+  StaticJsonBuffer<JSON_OBJECT_SIZE(16)> jsonBuffer;  //  allow for a few extra json fields that actually being used at the moment
   JsonObject& root = jsonBuffer.createObject();
 
   root["Dev"] = cloud.id;
@@ -134,25 +133,23 @@ String serializeData(SensorData data){
   root["WiFi"] = device.WiFiConnectAttempts;
   root["Mem"] = ESP.getFreeHeap();
   root["Id"] = ++sendCount;
-  
+
   root.printTo(buffer, sizeof(buffer));
 
   return (String)buffer;
 }
 
-String buildPartialHttpRequest(){
-    return "POST " + cloud.endPoint + " HTTP/1.1\r\n" +
+String buildHttpRequest(String data){  
+  return "POST " + cloud.endPoint + " HTTP/1.1\r\n" +
     "Host: " + cloud.host + "\r\n" +
     "Authorization: SharedAccessSignature " + cloud.fullSas + "\r\n" +
     "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
-    "Content-Length: ";
-}
-
-String buildHttpRequest(String data){   
-    return partialHttpRequest + data.length() + "\r\n\r\n" + data;
+    "Content-Length: " + data.length() + "\r\n\r\n" + data;
 }
 
 void publishToAzure() {
+  int bytesWritten = 0;
+
   // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
 
   initialiseAzure();
@@ -161,24 +158,28 @@ void publishToAzure() {
   if (!tlsClient.connected()) { return; }
   
   setLedState(Off);
-    
-  tlsClient.print(buildHttpRequest(serializeData(data)));
+
+  tlsClient.flush();
+
+  bytesWritten = tlsClient.print(buildHttpRequest(serializeData(data))); 
   
   String response = "";
   String chunk = "";
   int limit = 1;
   
   do {
-    if (tlsClient.connected()) {
-      yield(); // give esp8266 firmware some time
+    if (tlsClient.connected()) { 
+      yield();
       chunk = tlsClient.readStringUntil('\n');
       response += chunk;
     }
-  } while (chunk.length() > 0 && ++limit < 100);
+  } while (chunk.length() > 0 && ++limit < 100);  
 
-  Serial.print("Memory ");
+  Serial.print("Bytes sent ");
+  Serial.print(bytesWritten);
+  Serial.print(", Memory ");
   Serial.print(ESP.getFreeHeap());
-  Serial.print(", Message ");
+  Serial.print(" Message ");
   Serial.print(sendCount);
   Serial.print(", Response chunks ");
   Serial.print(limit);
