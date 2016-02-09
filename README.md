@@ -61,6 +61,10 @@ Security: Check out the [Publish.ino](https://raw.githubusercontent.com/glovebox
 5. Deploy the solution to either your NodeMCU, WeMos or Sparkfun ESP8266 Dev devices.
 6. View data with Device Explorer
 
+Optional
+1. Azure Stream Analytics
+2. Power BI
+
 
 ##Azure IoT Hub Setup
 
@@ -112,6 +116,42 @@ Then upload the sketch to your device.
 From Device Explorer, head to the Data tab, select your device, enable consumer group then click Monitor.
 
 ![IoT Hub Data](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/IoTHubData.JPG)
+
+
+
+##Azure Stream Analytics
+
+[Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain real-time insights from devices, sensors, infrastructure, and applications.
+
+See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the timezone to your local timezone offset.  Australia is currently +11 hours.
+
+    SELECT
+        DateAdd(minute,-5,System.TimeStamp) AS WinStartTime, 
+        System.TimeStamp AS WinEndTime, 
+        DateAdd(Hour, 11, System.TIMESTAMP) AS AUTimezone,
+        Dev AS [DeviceId],
+        AVG(Celsius) AS [Celsius], 
+        AVG(hPa) AS [hPa],
+        AVG(Humidity) AS [Humidity]        
+    INTO [OutputPBI]
+    FROM [Input]  TIMESTAMP BY UTC
+    GROUP BY Dev, TumblingWindow (mi, 10)
+
+ 
+##Power BI
+
+[Microsoft Power BI](https://powerbi.microsoft.com) transforms your company's data into rich visuals for you to collect and organize so you can focus on what matters to you. Stay in the know, spot trends as they happen, and push your business further. 
+
+Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab and modify the real time report as per this image.
+
+Power BI Designer Setup
+![Power BI Designer Setup](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIDesigner.JPG)
+
+
+Power BI Report Viewer
+![Power BI Report Viewer](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIReport.JPG)
+
+
 
 ## Data Schema
 
