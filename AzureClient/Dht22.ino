@@ -21,7 +21,8 @@ void getDht22Readings(){
   int retryCount = 0;
   initDht22();
 
-  do {  
+  do {
+    delay(50);
     data.temperature = dht22.readTemperature(); 
     data.humidity = dht22.readHumidity();
   } while ((isnan(data.temperature) || isnan(data.humidity)) && ++retryCount < 10);

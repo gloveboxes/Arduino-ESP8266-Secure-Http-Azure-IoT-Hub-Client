@@ -61,7 +61,10 @@ Security: Check out the [Publish.ino](https://raw.githubusercontent.com/glovebox
 5. Deploy the solution to either your NodeMCU, WeMos or Sparkfun ESP8266 Dev devices.
 6. View data with Device Explorer
 
-Optional
+Optionally, visualise your data in real time with Azure Stream Analytics and Power BI.
+
+Setting up:- 
+
 1. Azure Stream Analytics
 2. Power BI
 
