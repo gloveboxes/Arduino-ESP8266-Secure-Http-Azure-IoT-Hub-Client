@@ -90,7 +90,7 @@ Register Devices for your newly created IoT Hub.
 
 The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on the device in the Device Explorer.
 
-The fuction initCloudConfig() in the AzureClient.ino called from the setup function has two signatures. 
+The function initCloudConfig() in the AzureClient.ino called from the setup function has two signatures. 
 
 
   
@@ -114,7 +114,8 @@ To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPR
   - Geo location of the device
   - Deploy this app to the NodeMCU to write configuration settings to EEPROM
 
-Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
+Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will 
+read this configuration information from the EEPROM. Be sure to call fuction initCloudConfig() with no parameters.
 
 
 ##NodeMCU or WeMos EEPROM Configuration
