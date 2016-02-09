@@ -115,7 +115,7 @@ To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPR
   - Deploy this app to the NodeMCU to write configuration settings to EEPROM
 
 Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will 
-read this configuration information from the EEPROM. Be sure to call fuction initCloudConfig() with no parameters.
+read this configuration information from the EEPROM. Be sure to call function initCloudConfig() with no parameters.
 
 
 ##NodeMCU or WeMos EEPROM Configuration
@@ -159,7 +159,7 @@ From Device Explorer, head to the Data tab, select your device, enable consumer 
 
 [Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain real-time insights from devices, sensors, infrastructure, and applications.
 
-See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the timezone to your local timezone offset.  Australia is currently +11 hours.
+See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the time zone to your local time zone offset.  Australia is currently +11 hours.
 
     SELECT
         DateAdd(minute,-5,System.TimeStamp) AS WinStartTime, 
@@ -264,7 +264,7 @@ Starting with 1.6.4, Arduino allows installation of third-party platform package
 2. Start Arduino and open Preferences window.
 3. Enter  http://arduino.esp8266.com/stable/package_esp8266com_index.json  into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
 4. Open Boards Manager from Tools > Board menu and install esp8266 platform (and don't forget to select your ESP8266 board from Tools > Board menu after installation).
-5. Select NodeMUC or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
+5. Select NodeMCU or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
 6. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
 
 ##ESP8266 Arduino Core Documentation 
