@@ -1,4 +1,4 @@
-# Temperature, Pressure and Light Sensor Streaming over HTTPS to Azure IoT Hub or Event Hubs
+# Secure streaming weather data over HTTPS from ESP8266 devices to Azure IoT Hub/Event Hub
 
 
 ## Platform
