@@ -118,21 +118,8 @@ Upload this sketch to burn these settings to the device EEPROM. After this you d
 read this configuration information from the EEPROM. Be sure to call function initCloudConfig() with no parameters.
 
 
-##NodeMCU or WeMos EEPROM Configuration
 
-Before uploading the Azure.ino sketch to your NodeMCU or WeMos you first need to configure the SetEEPROMConfiguration.ino sketch with one or more 
-Wifi SSIDs/Passwords and the device geo location. Upload this sketch to burn these settings to the device EEPROM. 
-After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
-
-
-1. SetEEPROMConfiguration.ino sets the following 
-  * Wi-Fi SSID and password pairs, put in priority order.
-  * Wifi - Is the number of WiFi ssid and password pairs
-  * Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key.  For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
-  * Geo location of the device
-  * Deploy this app to the NodeMCU to write configuration settings to EEPROM
-
-##Configure the main AzureClient.ino solution 
+##Device Configuration 
 
 You need to configure the initDeviceConfig() function in the AzureClient.ino file.
 
@@ -154,8 +141,9 @@ From Device Explorer, head to the Data tab, select your device, enable consumer 
 ![IoT Hub Data](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/IoTHubData.JPG)
 
 
+##Visualising Data
 
-##Azure Stream Analytics
+###Azure Stream Analytics
 
 [Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain real-time insights from devices, sensors, infrastructure, and applications.
 
@@ -174,18 +162,18 @@ See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visual
     GROUP BY Dev, TumblingWindow (mi, 10)
 
  
-##Power BI
+###Power BI
 
 [Microsoft Power BI](https://powerbi.microsoft.com) transforms data into rich visuals for you to collect, organize and spot trends as they happen.
 
 Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab and modify the real time report as per this image.
 
-###Power BI Designer Setup
+####Power BI Designer Setup
 
 ![Power BI Designer Setup](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIDesigner.JPG)
 
 
-###Power BI Report Viewer
+####Power BI Report Viewer
 
 View on the web or with the Power BI apps available on iOS, Android and Windows.
 
