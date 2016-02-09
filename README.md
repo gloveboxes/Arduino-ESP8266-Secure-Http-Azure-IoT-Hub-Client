@@ -85,6 +85,36 @@ Register Devices for your newly created IoT Hub.
 * or you can create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
 
 
+
+##Cloud Configuration
+
+
+The fuction initCloudConfig() in the AzureClient.ino called in the setup function has two signatures. Note, the IoT Hub device id, key and connection string can be obtained by right mouse clicking on the device in the Device Explorer.
+
+  
+-  initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
+
+   
+    Example:
+    
+    initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=DeviceID;SharedAccessKey=Device Key", "SSID", "Password", "Sydney");
+   
+    
+
+
+### Optional EEPROM Configuration
+
+To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
+
+  - Wi-Fi SSID and password pairs, put in priority order.
+  - Wifi - Is the number of WiFi ssid and password pairs
+  - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
+  - Geo location of the device
+  - Deploy this app to the NodeMCU to write configuration settings to EEPROM
+
+Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM.
+
+
 ##NodeMCU or WeMos EEPROM Configuration
 
 Before uploading the Azure.ino sketch to your NodeMCU or WeMos you first need to configure the SetEEPROMConfiguration.ino sketch with one or more 
