@@ -200,13 +200,13 @@ The AzureClient sketch streams data in the following JSON format, of course you 
 
 
 
-##Physical Board
+##ESP8266 Based Development Boards
 
 
 There are a number of ESP8266 based development boards available so be sure to check out this great article 
 ["Comparison of ESP8266 NodeMCU development boards"](http://frightanic.com/iot/comparison-of-esp8266-nodemcu-development-boards/).
 
-The two dev boards that captured my interest are the NodeMCU V2 and the WeMos D1 Mini and this project supports both.
+
 
 ###NodeMCU V2 Hardware
 
