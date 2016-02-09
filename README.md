@@ -9,12 +9,22 @@ This project is implemented and tested on the following development boards:-
 2. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) 
 3. and [SparkFun ESP8266 Thing](https://www.sparkfun.com/products/13711)
 
-Platform: The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced platform that has really come to life with Arduino support.
+##Azure IoT Hub and Azure Event Hub
+
+IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
+designed for internet scale data ingestion. Unlock the value of that data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
+[Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
+[Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough).
+
+
+Device Platform: The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced platform that has really come to life with Arduino support.
 
 Firmware: Flashed with [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware with HTTPS (TLS) support, making this a viable platform for secure IoT data streaming.
 
 Purpose: The solution can securely stream data directly to 
 [Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.
+
+
 
 Acknowledgments: Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
 Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-nodemcu-arduino-and-azure-event-hub-a33043)" project 
@@ -188,14 +198,7 @@ The AzureClient sketch streams data in the following JSON format, of course you 
 
     {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Humidity":50,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
 
-##Azure IoT Hub and Azure Event Hub
 
-Ok, so you've read this far and you may be wondering what is Azure IoT Hub and Azure Event Hub.  
-
-IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
-designed for internet scale data ingestion. Unlock the value of that data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
-[Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
-[Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough).
 
 ##Physical Board
 
