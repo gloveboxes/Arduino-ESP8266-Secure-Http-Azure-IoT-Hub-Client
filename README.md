@@ -151,6 +151,8 @@ Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/works
 
 ###Power BI Report Viewer
 
+View on the web or with the Power BI apps available on iOS, Android and Windows.
+
 ![Power BI Report Viewer](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIReport.JPG)
 
 
