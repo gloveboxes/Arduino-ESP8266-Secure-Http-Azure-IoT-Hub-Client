@@ -140,15 +140,17 @@ See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visual
  
 ##Power BI
 
-[Microsoft Power BI](https://powerbi.microsoft.com) transforms your company's data into rich visuals for you to collect and organize so you can focus on what matters to you. Stay in the know, spot trends as they happen, and push your business further. 
+[Microsoft Power BI](https://powerbi.microsoft.com) transforms data into rich visuals for you to collect, organize and spot trends as they happen.
 
 Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab and modify the real time report as per this image.
 
-Power BI Designer Setup
+###Power BI Designer Setup
+
 ![Power BI Designer Setup](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIDesigner.JPG)
 
 
-Power BI Report Viewer
+###Power BI Report Viewer
+
 ![Power BI Report Viewer](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIReport.JPG)
 
 
