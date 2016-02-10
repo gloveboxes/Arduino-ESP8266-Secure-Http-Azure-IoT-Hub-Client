@@ -79,19 +79,23 @@ Register Devices for your newly created IoT Hub.
 
 #Cloud Configuration
 
-The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on the device in the Device Explorer.
+The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on a device in the Device Explorer.
 
-The function initCloudConfig() in the AzureClient.ino called from the setup function has two signatures. 
+The function initCloudConfig() called from setup in the AzureClient.ino has two signatures. 
 
 
   
--  initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
-
+    // Inline cloud and network configuration information
+    initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
    
     Example:
     
-    initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=DeviceID;SharedAccessKey=Device Key", "SSID", "Password", "Sydney");
-   
+    initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=YourDeviceKey", "SSID", "Password", "Sydney");
+    
+    or 
+    
+    // To read cloud and network configuration from EEPROM
+    initCloudConfig(); 
     
 
 

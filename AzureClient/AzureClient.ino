@@ -52,39 +52,50 @@
 
   CLOUD CONFIGURATION:
 
-  The method initCloudConfig() called in setup has two signatures
+  The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on a device in the Device Explorer.
+  
+  The function initCloudConfig() called from setup in the AzureClient.ino has two signatures.
+  
+    // Inline cloud and network configuration information
+    initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
+    
+    Example:
+    
+    initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=YourDeviceKey", "SSID", "Password", "Sydney");
+    
+    or 
+    
+    // To read cloud and network configuration from EEPROM
+    initCloudConfig(); 
+  
+  Optional EEPROM Configuration
+  
+  To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
+  
+  Wi-Fi SSID and password pairs, put in priority order.
+  Wifi - Is the number of WiFi ssid and password pairs
+  Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
+  Geo location of the device
+  Deploy this app to the NodeMCU to write configuration settings to EEPROM
+  Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will read this configuration information from the EEPROM. Be sure to call function initCloudConfig() with no parameters.
 
-  1. initCloudConfig() with no parameters reads prepopulated configuration information from the EEPROM
-  2. initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device")
-
-  eg initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=DeviceID;SharedAccessKey=Device Key", "SSID", "Password", "Sydney");
-
-
-  If loading from EEPROM then 
-  - Open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables
-  - Wi-Fi SSID and password pairs, put in priority order.
-  - Wifi - Is the number of WiFi ssid and password pairs
-  - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
-  - Geo location of the device
-  - Deploy this app to the NodeMCU to write configuration settings to EEPROM
-
-
+  
   DEVICE SAMPLE CONFIGURATION:
 
-  // device configuration in this Arduino Sketch
-  void initDeviceConfig(){
-    device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
-    device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-    cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-    cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
-    cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
-  }
+    // device configuration in this Arduino Sketch
+    void initDeviceConfig(){
+      device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+      device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+      cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
+      cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
+      cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+    }
 
 
   DRIVERS:
   - NodeMCU - On Windows, Mac and Linux you will need to install the latest CP210x USB to UART Bridge VCP Drivers. (https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx)
   - WeMos - On Windows and Mac install the latest Ch340G drivers. No drivers required for Linux. (http://www.wemos.cc/wiki/doku.php?id=en:ch340g)
-  - Sparkfun ESP8266 Thing Dev - No additional drivers required
+  - Sparkfun ESP8266 Thing Dev - https://learn.sparkfun.com/tutorials/esp8266-thing-development-board-hookup-guide/hardware-setup
 
 
   ESP8266 ARDUINO IDE SUPPORT:
@@ -121,8 +132,9 @@
 CloudConfig cloud;
 DeviceConfig device;
 SensorData data;
+
+IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 int ntpRetryCount;
-IPAddress timeServer(203, 56, 27, 253); // au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
@@ -140,8 +152,9 @@ void setup() {
   WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
 
 	initDeviceConfig();
-	initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=oH8NYVmQVbFckto98m5h9XXYesslf00mZuFDs89cck0=", "YourSSID", "WiFiPwd", "Sydney");
-//  initCloudConfig();  // alternate signature - read config from EEPROM
+ 
+//	initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=oH8NYVmQVbFckto98m5h9XXYesslf00mZuFDs89cck0=", "YourSSID", "WiFiPwd", "Sydney");
+  initCloudConfig();  // alternate signature - read config from EEPROM
 
   initWifi();
 }
