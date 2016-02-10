@@ -178,37 +178,47 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 
 
-##NodeMCU V2 Hardware
+##NodeMCU V2 with BMP180 Sensor
 
 1. [NodeMCU v2 - Lua based ESP8266 development kit](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
-3. [Adafruit Mini 8x8 LED Matrix w/I2C Backpack](http://tronixlabs.com/display/led/matrix/adafruit-mini-8x8-led-matrix-w-i2c-backpack-red-australia/)
-4. 1 x [Light Dependent Resistor](http://tronixlabs.com/sensors/light/ldr/light-dependent-resistor/)
-5. 1 x 10k resistor
-6. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
+3. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
+4. Wires
 
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
 
+##WeMos D1 Mini MCU
 
-##WeMos D1 Mini Hardware
+###WeMos D1 Mini with BMP180 Sensor
+
+1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
+2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
+3. 1 x Mini Breadboard
+4. Wires
+
+
+![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
+   
+
+###WeMos D1 Mini with DHT Shield Sensor
+
+No wiring required, just solder the supplied header pins for the WeMos and the DHT Sensor shield.
 
 1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
 2. [DHT Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht) or the [DHT Pro Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht_pro).
 
-No wiring required, just solder the supplied header pins for the WeMos and the DHT Sensor shield.
+![WeMos D1 Mini](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1MiniDHTShield.jpg)
 
-![WeMos D1 Mini](http://www.wemos.cc/wiki/lib/exe/fetch.php?cache=&media=en:d1_mini_esp8266ex_fixled.jpg)
 
-###Alternate wiring for BMP180 Temperature and Air Pressure Sensor
-
-![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
-    
+ 
 #Software Requirements
 
 ##Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
 2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
+3. [ESP8266 Thing Development Board Hookup Guide](https://learn.sparkfun.com/tutorials/esp8266-thing-development-board-hookup-guide/hardware-setup)
+
 
 ##Arduino IDE
 
