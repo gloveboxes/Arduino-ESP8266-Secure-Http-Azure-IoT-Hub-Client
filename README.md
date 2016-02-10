@@ -61,7 +61,7 @@ Follow lab [Setting Up Azure IoT](http://thinglabs.io/workshop/cs/nightlight/set
 
 
 
-#Cloud Configuration
+#Azure Configuration
 
 Right mouse click the device you setup in Device Explorer to obtain device id, key and connection string information.
 
@@ -70,6 +70,7 @@ The function initCloudConfig() called from the setup() function in AzureClient.i
 
   
     // Inline cloud and network configuration information
+    
     initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
    
     Example:
@@ -78,7 +79,8 @@ The function initCloudConfig() called from the setup() function in AzureClient.i
     
     or 
     
-    // To read cloud and network configuration from EEPROM
+    //To read cloud and network configuration from EEPROM. This is useful if deploying multiple devices
+    
     initCloudConfig(); 
     
 
@@ -91,10 +93,16 @@ You can burn cloud and network configuration information to the device EEPROM.  
   - Wifi - Is the number of WiFi ssid and password pairs
   - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
   - Geo location of the device
-  - Deploy this app to the NodeMCU to write configuration settings to EEPROM
+  
+Deploy this app to the NodeMCU to write configuration settings to EEPROM.
 
-Upload this sketch to burn these settings to the device EEPROM. After this you deploy the AzureClient sketch which will 
-read this configuration information from the EEPROM. Be sure to call function initCloudConfig() with no parameters.
+** Be sure to call function initCloudConfig() with no parameters to ensure Azure and Network parameters are read from EEPROM. **
+
+
+Next upload the AzureClient sketch which will 
+read this configuration information from the EEPROM. 
+
+
 
 
 
