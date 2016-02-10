@@ -48,9 +48,9 @@ to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
-3. Flash the EEPROM with Wifi, Geo location, plus your Azure IoT Hub (or Event Hub) host, device id and key.
+3. Flash Azure and Network configuration information to EEPROM
 4. Update the main AzureClient.ino sketch
-5. Deploy the solution to either your NodeMCU, WeMos or Sparkfun ESP8266 Dev devices.
+5. Deploy the solution to your ESP8266 based device.
 6. View data with Device Explorer
 7. Optionally: Visualise your data in real time with Azure Stream Analytics and Power BI.
 
