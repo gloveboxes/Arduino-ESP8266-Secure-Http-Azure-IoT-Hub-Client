@@ -1,17 +1,17 @@
-# Secure streaming weather data over HTTPS from ESP8266 devices to Azure IoT Hub/Event Hub
+#Securely stream data from ESP8266 MCUs to Azure IoT Hub over HTTPS/REST
 
 ###Purpose
 
 This solution securely streams sensor data directly to 
 [Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) 
-or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) via Azure HTTPS/REST APIs.
+or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs from ESP8266 MCUs.
 
 
 ###Device Platform
 
 
-The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced [Arduino](https://github.com/esp8266/Arduino) compatible MCU with integrated WiFi.
-
+The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced [Arduino](https://github.com/esp8266/Arduino) 
+compatible MCU with integrated WiFi. 
 
 This project is implemented and tested on the following ESP8266 based development boards:-
 
@@ -27,10 +27,11 @@ This project is implemented and tested on the following ESP8266 based developmen
 ###Azure IoT Hub and Azure Event Hub
 
 IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
-designed for internet scale data ingestion. Unlock data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
-[Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
-[Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough).
+designed for internet scale data ingestion. 
 
+[Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
+[Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
+[Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough) provide ways to visualise and unlock the value of your data in Azure.
 
 
 ###Acknowledgments
@@ -51,37 +52,20 @@ to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 4. Update the main AzureClient.ino sketch
 5. Deploy the solution to either your NodeMCU, WeMos or Sparkfun ESP8266 Dev devices.
 6. View data with Device Explorer
-
-Optionally, visualise your data in real time with Azure Stream Analytics and Power BI.
-
-Setting up:- 
-
-1. Azure Stream Analytics
-2. Power BI
+7. Optionally: Visualise your data in real time with Azure Stream Analytics and Power BI.
 
 
-#Azure IoT Hub Setup
+#Setting Up Azure IoT Hub
 
-
-[Creating an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) (there is a free 8000 message/day limited subscription)
-
-##Register your Device with IoT Hub
-
-Register Devices for your newly created IoT Hub. 
-
-* Use the Device Explorer utility from the [Azure IoT SDKs](https://github.com/Azure/azure-iot-sdks) Tools directory  
-
-![DeviceExplorer](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/DeviceExplorerUI.jpg)
-
-* Or, create your own utility by following the instructions in the [Create an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) link.
+Follow lab [Setting Up Azure IoT](http://thinglabs.io/workshop/cs/nightlight/setup-azure-iot-hub/) to provision an Azure IoT Hub and an IoT Hub device. 
 
 
 
 #Cloud Configuration
 
-The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on a device in the Device Explorer.
+Right mouse click the device you setup in Device Explorer to obtain device id, key and connection string information.
 
-The function initCloudConfig() called from setup in the AzureClient.ino has two signatures. 
+The function initCloudConfig() called from the setup() function in AzureClient.ino has two signatures. 
 
 
   
@@ -101,7 +85,7 @@ The function initCloudConfig() called from setup in the AzureClient.ino has two 
 
 ##Optional EEPROM Configuration
 
-To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
+You can burn cloud and network configuration information to the device EEPROM.  To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
 
   - Wi-Fi SSID and password pairs, put in priority order.
   - Wifi - Is the number of WiFi ssid and password pairs
