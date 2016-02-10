@@ -96,7 +96,7 @@ You can burn cloud and network configuration information to the device EEPROM.  
   
 Deploy this app to the NodeMCU to write configuration settings to EEPROM.
 
-** Be sure to call function initCloudConfig() with no parameters to ensure Azure and Network parameters are read from EEPROM. **
+**Be sure to call function initCloudConfig() with no parameters to ensure Azure and Network parameters are read from EEPROM.**
 
 
 Next upload the AzureClient sketch which will 
