@@ -1,68 +1,49 @@
 # Secure streaming weather data over HTTPS from ESP8266 devices to Azure IoT Hub/Event Hub
 
+###Purpose
 
-## Platform
+This solution securely streams sensor data directly to 
+[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) 
+or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) via Azure HTTPS/REST APIs.
 
-This project is implemented and tested on the following development boards:-
+
+###Device Platform
+
+
+The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced [Arduino](https://github.com/esp8266/Arduino) compatible MCU with integrated WiFi.
+
+
+This project is implemented and tested on the following ESP8266 based development boards:-
 
 1. [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU), 
 2. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) 
 3. and [SparkFun ESP8266 Thing](https://www.sparkfun.com/products/13711)
 
-##Azure IoT Hub and Azure Event Hub
+###Firmware
+
+[Arduino core for ESP8266 WiFi chip V2.0](https://github.com/esp8266/Arduino) firmware adds HTTPS (TLS) support, making this a viable platform for secure IoT data streaming.
+
+
+###Azure IoT Hub and Azure Event Hub
 
 IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
-designed for internet scale data ingestion. Unlock the value of that data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
+designed for internet scale data ingestion. Unlock data with [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
 [Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
 [Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough).
 
 
-Device Platform: The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced platform that has really come to life with Arduino support.
 
-Firmware: Flashed with [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino) V2.0 firmware with HTTPS (TLS) support, making this a viable platform for secure IoT data streaming.
+###Acknowledgments
 
-Purpose: The solution can securely stream data directly to 
-[Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs.
-
-
-
-Acknowledgments: Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
+Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
 Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-nodemcu-arduino-and-azure-event-hub-a33043)" project 
 I've migrated my "[Arduino NodeMCU ESP8266 MQTT](https://github.com/gloveboxes/Arduino-NodeMCU-ESP82886-Mqtt-Client)" project and added IoT Hub support 
 to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
 
-Security: Check out the [Publish.ino](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Publish.ino) sketch, the main bit of magic is to create the [Azure IoT Hub Shared Access Signature](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-devguide/#security).
 
-    String createIotHubSas(char *key, String url){  
-        String stringToSign = url + "\n" + expire;
 
-        // START: Create signature
-        // https://raw.githubusercontent.com/adamvr/arduino-base64/master/examples/base64/base64.ino
-        
-        int keyLength = strlen(key);
-        
-        int decodedKeyLength = base64_dec_len(key, keyLength);
-        char decodedKey[decodedKeyLength];  //allocate char array big enough for the base64 decoded key
-        
-        base64_decode(decodedKey, key, keyLength);  //decode key
-        
-        Sha256.initHmac((const uint8_t*)decodedKey, decodedKeyLength);
-        Sha256.print(stringToSign);  
-        char* sign = (char*) Sha256.resultHmac();
-        // END: Create signature
-        
-        // START: Get base64 of signature
-        int encodedSignLen = base64_enc_len(HASH_LENGTH);
-        char encodedSign[encodedSignLen];
-        base64_encode(encodedSign, sign, HASH_LENGTH); 
-        
-        // SharedAccessSignature
-        return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + expire;
-        // END: create SAS  
-    }
-
-##Overview of steps to deploying the solution
+#Setup and Deployment Summary
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
@@ -79,7 +60,7 @@ Setting up:-
 2. Power BI
 
 
-##Azure IoT Hub Setup
+#Azure IoT Hub Setup
 
 
 [Creating an Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-csharp-csharp-getstarted/) (there is a free 8000 message/day limited subscription)
@@ -96,7 +77,7 @@ Register Devices for your newly created IoT Hub.
 
 
 
-##Cloud Configuration
+#Cloud Configuration
 
 The Azure IoT Hub device id, key and connection string can be obtained by right mouse clicking on the device in the Device Explorer.
 
@@ -114,7 +95,7 @@ The function initCloudConfig() in the AzureClient.ino called from the setup func
     
 
 
-### Optional EEPROM Configuration
+##Optional EEPROM Configuration
 
 To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
 
@@ -129,7 +110,7 @@ read this configuration information from the EEPROM. Be sure to call function in
 
 
 
-##Device Configuration 
+#Device Configuration 
 
 You need to configure the initDeviceConfig() function in the AzureClient.ino file.
 
@@ -144,18 +125,19 @@ You need to configure the initDeviceConfig() function in the AzureClient.ino fil
 
 Then upload the sketch to your device.
 
-##Viewing Data
+#Viewing Data
 
 From Device Explorer, head to the Data tab, select your device, enable consumer group then click Monitor.
 
 ![IoT Hub Data](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/IoTHubData.JPG)
 
 
-##Visualising Data
+#Visualising Data
 
-###Azure Stream Analytics
+##Azure Stream Analytics
 
-[Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain real-time insights from devices, sensors, infrastructure, and applications.
+[Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain 
+real-time insights in to your device, sensor, infrastructure, and application data.
 
 See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the time zone to your local time zone offset.  Australia is currently +11 hours.
 
@@ -172,18 +154,18 @@ See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visual
     GROUP BY Dev, TumblingWindow (mi, 10)
 
  
-###Power BI
+##Power BI
 
-[Microsoft Power BI](https://powerbi.microsoft.com) transforms data into rich visuals for you to collect, organize and spot trends as they happen.
+[Microsoft Power BI](https://powerbi.microsoft.com) makes it easy to visualise, organize and better understand your data.
 
 Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab and modify the real time report as per this image.
 
-####Power BI Designer Setup
+###Power BI Designer Setup
 
 ![Power BI Designer Setup](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIDesigner.JPG)
 
 
-####Power BI Report Viewer
+###Power BI Report Viewer
 
 View on the web or with the Power BI apps available on iOS, Android and Windows.
 
@@ -191,7 +173,7 @@ View on the web or with the Power BI apps available on iOS, Android and Windows.
 
 
 
-## Data Schema
+#Data Schema
 
 The AzureClient sketch streams data in the following JSON format, of course you can change this:)
 
@@ -200,7 +182,7 @@ The AzureClient sketch streams data in the following JSON format, of course you 
 
 
 
-##ESP8266 Based Development Boards
+#ESP8266 Based Development Boards
 
 
 There are a number of ESP8266 based development boards available so be sure to check out this great article 
@@ -208,7 +190,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 
 
-###NodeMCU V2 Hardware
+##NodeMCU V2 Hardware
 
 1. [NodeMCU v2 - Lua based ESP8266 development kit](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
@@ -220,7 +202,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
 
 
-###WeMos D1 Mini Hardware
+##WeMos D1 Mini Hardware
 
 1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
 2. [DHT Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht) or the [DHT Pro Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht_pro).
@@ -231,23 +213,23 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 
     
-## Software Requirements
+#Software Requirements
 
-###Drivers
+##Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
 2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
 
-### Arduino IDE
+##Arduino IDE
 
 1. [Arduino IDE 1.6.5](https://www.arduino.cc/en/Main/Software) As at Dec, 2015, [Arduino 1.6.6 has several issues, so to stick with 1.6.5](http://esp8266.github.io/Arduino/versions/2.0.0/doc/installing.html)
 2. As at Dec 2015, ESP8266 Board Manager 2.0.0 or better required for HTTPS/TLS Secure Client support.
 
-### Visual Studio
+##Visual Studio
 
 There an fantastic plugin for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  IntelliSence, auto complete, debugging, it doesn't get much better:)
 
-###Installing ESP8266 support with the Arduino Boards Manager
+##Arduino Boards Manager ESP8266 Support
 
 Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager. We have packages available for Windows, Mac OS, and Linux (32 and 64 bit).
 
@@ -258,6 +240,6 @@ Starting with 1.6.4, Arduino allows installation of third-party platform package
 5. Select NodeMCU or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
 6. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
 
-##ESP8266 Arduino Core Documentation 
+#ESP8266 Arduino Core Documentation 
 
 Be sure to read the [ESP8266 Arduino Core Documentation](http://esp8266.github.io/Arduino/versions/2.0.0/) - there are some minor gotchas.
