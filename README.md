@@ -199,7 +199,9 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 ![WeMos D1 Mini](http://www.wemos.cc/wiki/lib/exe/fetch.php?cache=&media=en:d1_mini_esp8266ex_fixled.jpg)
 
+###Alternate wiring for BMP180 Temperature and Air Pressure Sensor
 
+![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
     
 #Software Requirements
 
