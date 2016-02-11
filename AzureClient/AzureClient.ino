@@ -134,7 +134,6 @@ DeviceConfig device;
 SensorData data;
 
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
-int ntpRetryCount;
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
@@ -165,12 +164,7 @@ void loop() {
 	if (WiFi.status() == WL_CONNECTED) {
 		setLedState(On);
     
-    ntpRetryCount = 0;
-    while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
-      Serial.println(WiFi.localIP());
-      setSyncProvider(getNtpTime);
-      setSyncInterval(60 * 60);  
-    }
+    getCurrentTime();
 
     publishToAzure();
 
@@ -186,6 +180,15 @@ void loop() {
     initWifi();
     delay(250);
 	}
+}
+
+void getCurrentTime(){
+  int ntpRetryCount = 0;
+  while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
+    Serial.println(WiFi.localIP());
+    setSyncProvider(getNtpTime);
+    setSyncInterval(60 * 60);  
+  }
 }
 
 void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
