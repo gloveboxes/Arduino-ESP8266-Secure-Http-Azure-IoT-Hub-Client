@@ -94,7 +94,7 @@ You can burn cloud and network configuration information to the device EEPROM.  
   - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
   - Geo location of the device
   
-Deploy this app to the NodeMCU to write configuration settings to EEPROM.
+Upload this sketch to the device to write configuration settings to EEPROM.
 
 **Be sure to call function initCloudConfig() with no parameters to ensure Azure and Network parameters are read from EEPROM.**
 
@@ -135,7 +135,7 @@ From Device Explorer, head to the Data tab, select your device, enable consumer 
 [Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain 
 real-time insights in to your device, sensor, infrastructure, and application data.
 
-See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the time zone to your local time zone offset.  Australia is currently +11 hours.
+See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the time zone to your local time zone offset.  Australia (AEDST) is currently +11 hours.
 
     SELECT
         DateAdd(minute,-5,System.TimeStamp) AS WinStartTime, 
@@ -188,7 +188,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 ##NodeMCU V2 with BMP180 Sensor
 
-1. [NodeMCU v2 - Lua based ESP8266 development kit](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
+1. [NodeMCU v2](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
 3. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
 4. Wires
@@ -239,7 +239,7 @@ There an fantastic plugin for Visual Studio that adds Arduino support from [Visu
 
 ##Arduino Boards Manager ESP8266 Support
 
-Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager. We have packages available for Windows, Mac OS, and Linux (32 and 64 bit).
+Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager.
 
 1. Install Arduino 1.6.5 from the Arduino website.
 2. Start Arduino and open Preferences window.
