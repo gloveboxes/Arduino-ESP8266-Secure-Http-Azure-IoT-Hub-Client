@@ -21,7 +21,9 @@ This project is implemented and tested on the following ESP8266 based developmen
 
 ###Firmware
 
-[Arduino core for ESP8266 WiFi chip V2.0](https://github.com/esp8266/Arduino) firmware adds HTTPS (TLS) support, making this a viable platform for secure IoT data streaming.
+[Arduino core for ESP8266 WiFi chip V2.0](https://github.com/esp8266/Arduino) firmware adds HTTPS ([TLS](http://axtls.sourceforge.net/) 1.0 and 1.1) support, making this a viable platform for secure IoT data streaming. See [Security Discussion](https://github.com/esp8266/Arduino/issues/43) for more information.
+
+
 
 
 ###Azure IoT Hub and Azure Event Hub
@@ -188,9 +190,9 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 ##NodeMCU V2 with BMP180 Sensor
 
-1. [NodeMCU v2](http://tronixlabs.com/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
-2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
-3. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
+1. [NodeMCU v2](http://tronixlabs.com.au/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
+2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com.au/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
+3. 1 x [400 Tie Point Interlocking Solderless Breadboard](http://tronixlabs.com.au/nodebots/400-tie-point-interlocking-solderless-breadboard-australia/)
 4. Wires
 
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
@@ -200,7 +202,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 ###WeMos D1 Mini with BMP180 Sensor
 
 1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
-2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
+2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com.au/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
 3. 1 x Mini Breadboard
 4. Wires
 
