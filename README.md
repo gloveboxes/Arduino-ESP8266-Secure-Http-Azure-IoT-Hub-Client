@@ -35,6 +35,7 @@ designed for internet scale data ingestion.
 [Power Bi](https://powerbi.microsoft.com/en-us/) and preconfigured IoT Hub solutions such as 
 [Remote monitoring ](https://azure.microsoft.com/en-us/documentation/articles/iot-suite-remote-monitoring-sample-walkthrough) provide ways to visualise and unlock the value of your data in Azure.
 
+For more background information read this "[Stream Analytics & Power BI: A real-time analytics dashboard for streaming data](https://azure.microsoft.com/en-us/documentation/articles/stream-analytics-power-bi-dashboard/)" article.
 
 ###Acknowledgments
 
