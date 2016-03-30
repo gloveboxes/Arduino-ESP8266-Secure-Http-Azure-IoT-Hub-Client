@@ -208,7 +208,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 4. Wires
 
 
-![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
+![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
    
 
 ###WeMos D1 Mini with DHT Shield Sensor
