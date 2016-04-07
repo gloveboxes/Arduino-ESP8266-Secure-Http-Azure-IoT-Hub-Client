@@ -16,7 +16,7 @@ compatible MCU with integrated WiFi.
 This project is implemented and tested on the following ESP8266 based development boards:-
 
 1. [NodeMCU V2 (also known as V1.0)](https://en.wikipedia.org/wiki/NodeMCU), 
-2. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini) 
+2. [WeMos D1 Mini](http://www.wemos.cc/) 
 3. and [SparkFun ESP8266 Thing](https://www.sparkfun.com/products/13711)
 
 ###Firmware
@@ -202,7 +202,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 ###WeMos D1 Mini with BMP180 Sensor
 
-1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
+1. [WeMos D1 Mini](http://www.wemos.cc/)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com.au/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
 3. 1 x Mini Breadboard
 4. Wires
@@ -215,7 +215,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 No wiring required, just solder the supplied header pins for the WeMos and the DHT Sensor shield.
 
-1. [WeMos D1 Mini](http://www.wemos.cc/wiki/doku.php?id=en:d1_mini#getting_started)
+1. [WeMos D1 Mini](http://www.wemos.cc/)
 2. [DHT Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht) or the [DHT Pro Shield](http://www.wemos.cc/wiki/doku.php?id=en:dht_pro).
 
 ![WeMos D1 Mini](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1MiniDHTShield.jpg)
@@ -227,7 +227,7 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 ##Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
-2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/wiki/doku.php?id=en:ch340g). No drivers required for Linux.
+2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/Tutorial/get_started_in_arduino.html). No drivers required for Linux.
 3. [ESP8266 Thing Development Board Hookup Guide](https://learn.sparkfun.com/tutorials/esp8266-thing-development-board-hookup-guide/hardware-setup)
 
 
