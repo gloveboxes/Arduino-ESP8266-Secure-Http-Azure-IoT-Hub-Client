@@ -233,8 +233,10 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 ##Arduino IDE
 
-1. As at April, 2015 use [Arduino IDE 1.6.8](https://www.arduino.cc/en/Main/Software).
-2. As at April 2015, ESP8266 Board Manager 2.1 or better required for HTTPS/TLS Secure Client support.
+As at April 2015 use:-
+
+1. [Arduino IDE 1.6.8](https://www.arduino.cc/en/Main/Software).
+2. ESP8266 Board Manager 2.1 or better required for HTTPS/TLS Secure Client support.
 
 ##Visual Studio
 
@@ -242,7 +244,7 @@ There an fantastic plugin for Visual Studio that adds Arduino support from [Visu
 
 ##Arduino Boards Manager ESP8266 Support
 
-Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager.
+Arduino version 1.6.4 and above allows installation of third-party platform packages using Boards Manager.
 
 1. Install Arduino 1.6.8 from the Arduino website.
 2. Start Arduino and open Preferences window.
