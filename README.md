@@ -233,8 +233,8 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 ##Arduino IDE
 
-1. [Arduino IDE 1.6.5](https://www.arduino.cc/en/Main/Software) As at Dec, 2015, [Arduino 1.6.6 has several issues, so to stick with 1.6.5](http://esp8266.github.io/Arduino/versions/2.0.0/doc/installing.html)
-2. As at Dec 2015, ESP8266 Board Manager 2.0.0 or better required for HTTPS/TLS Secure Client support.
+1. As at April, 2015 use [Arduino IDE 1.6.8](https://www.arduino.cc/en/Main/Software).
+2. As at April 2015, ESP8266 Board Manager 2.1 or better required for HTTPS/TLS Secure Client support.
 
 ##Visual Studio
 
@@ -244,9 +244,9 @@ There an fantastic plugin for Visual Studio that adds Arduino support from [Visu
 
 Starting with 1.6.4, Arduino allows installation of third-party platform packages using Boards Manager.
 
-1. Install Arduino 1.6.5 from the Arduino website.
+1. Install Arduino 1.6.8 from the Arduino website.
 2. Start Arduino and open Preferences window.
-3. Enter  http://arduino.esp8266.com/stable/package_esp8266com_index.json  into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
+3. Enter http://arduino.esp8266.com/stable/package_esp8266com_index.json  into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
 4. Open Boards Manager from Tools > Board menu and install esp8266 platform (and don't forget to select your ESP8266 board from Tools > Board menu after installation).
 5. Select NodeMCU or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
 6. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
