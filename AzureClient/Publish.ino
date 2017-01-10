@@ -10,7 +10,7 @@ String serializeData(){
   root["Humidity"] = data.humidity;
   root["hPa"] = data.pressure;
   root["Light"] = data.light;
-  root["Geo"] = cloud.geo;  
+  root["Geo"] = data.geo;  
 
   //instrumentation
 //  root["WiFi"] = device.WiFiConnectAttempts;

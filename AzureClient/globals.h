@@ -1,10 +1,6 @@
 #ifndef Globals_h
 #define Globals_h
 
-//enum CloudMode {
-//  IoTHub,
-//  EventHub
-//};
 
 enum LedState {
   Off,
@@ -24,10 +20,6 @@ enum BoardType {
   Other
 };
 
-enum DisplayMode {
-  NoDisplay,
-  LedMatrix
-};
 
 struct SensorData{
   float temperature;
@@ -35,6 +27,8 @@ struct SensorData{
   int pressure;
   int light;
   int msgId;
+  const char *geo; 
+  unsigned int WiFiConnectAttempts;
 };
 
 struct CloudConfig {
@@ -49,7 +43,6 @@ struct CloudConfig {
   const char* certificateFingerprint;
   char *key;
   const char *id;
-  const char *geo;
   unsigned long lastPublishTime = 0;
   String fullSas;
   String endPoint;
@@ -58,17 +51,12 @@ struct CloudConfig {
 struct DeviceConfig {
   int WifiIndex = 0;
   unsigned long LastWifiTime = 0;
-  int WiFiConnectAttempts = 0;
   int wifiPairs = 0;
   const char ** ssid;
   const char **pwd;
   BoardType boardType = Other;            // OperationMode enumeration: NodeMCU, WeMos, SparkfunThing, Other
   SensorMode sensorMode = None;           // OperationMode enumeration: DemoMode (no sensors, fakes data), Bmp180Mode, Dht11Mode
-  DisplayMode displayMode = NoDisplay;    // DisplayMode enumeration: NoDisplay or LedMatrix
-
   unsigned int deepSleepSeconds = 0;      // Number of seconds for the ESP8266 chip to deepsleep for.  GPIO16 needs to be tied to RST to wake from deepSleep http://esp8266.github.io/Arduino/versions/2.0.0/doc/libraries.html
-
-
 };
 
 #endif

@@ -5,8 +5,6 @@
 
 Adafruit_BME280  bme280; // I2C
 bool bme280Initialised = false;
-float bme280Calibration = 0;
-
 
 void initBme280(){
   if (bme280Initialised) { return; }  
@@ -26,7 +24,7 @@ void getBme280Readings(){
   data.temperature = data.pressure = data.humidity = 0;
    
   for (int c = 0; c < numberOfSamples; c++) {  
-    data.temperature += bme280.readTemperature() + bme280Calibration; 
+    data.temperature += bme280.readTemperature(); 
     data.pressure += (int)((int)( bme280.readPressure() + 0.5) / 100);
     data.humidity += bme280.readHumidity();
     delay(500);

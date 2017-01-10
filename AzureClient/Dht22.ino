@@ -3,14 +3,13 @@
 #define DHTPIN22 2     // what digital pin we're connected to
 DHT dht22(DHTPIN22, DHT22);
 
-float dht22Calibration;
 bool dht22Initialised = false;
 
 void initDht22(){
   if (dht22Initialised) { return; }
   
   dht22.begin();
-  dht22Calibration = getTemperatureCalibration();
+  
   device.sensorMode = DhtShieldMode;
   delay(100);
 

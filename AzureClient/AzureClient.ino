@@ -44,7 +44,7 @@
   REQUIRED LIBRARIES: Install Arduino Libraries from Sketch -> Include Library -> Manage Libraries
   - ArduinoJson
   - Time
-  - Adafruit BMP085 (DON’T install the unified version)
+  - Adafruit BMP085 (Unified version)
   - DHT (DON’T install the unified version)
   - Adafruit Sensor
   - Adafruit BMP280

@@ -5,19 +5,14 @@
 
 Adafruit_BMP280 bmp280; // I2C
 bool bmp280Initialised = false;
-float bmp280Calibration = 0;
 
 
 void initBmp280(){
   if (bmp280Initialised) { return; }  
 
-  if (device.boardType == SparkfunThing) { Wire.begin(2, 14); } // Sparkfun ESP8266 Thing Dev
-  bmp280.begin();  
-  bmp280Calibration = getTemperatureCalibration();
+  bmp280.begin();
   
   bmp280Initialised = true;
-
-  Serial.print("initialised");
 }
 
 
@@ -25,10 +20,10 @@ void getBmp280Readings(){
   const int numberOfSamples = 4;
 
   initBmp280();
-  data.temperature = data.pressure = 0;
+  data.temperature = data.pressure = data.humidity = 0;
    
   for (int c = 0; c < numberOfSamples; c++) {  
-    data.temperature += bmp280.readTemperature() + bmp280Calibration; 
+    data.temperature += bmp280.readTemperature(); 
     Serial.print(data.temperature);
     data.pressure += (int)((int)( bmp280.readPressure() + 0.5) / 100);
     delay(500);

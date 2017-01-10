@@ -15,7 +15,7 @@ void initWifi(){
 
   WiFi.begin(device.ssid[device.WifiIndex], device.pwd[device.WifiIndex]);
   
-  device.WiFiConnectAttempts++;
+  data.WiFiConnectAttempts++;
   device.LastWifiTime = millis() + WifiTimeoutMilliseconds;
   
   device.WifiIndex++;  //increment wifi indexready for the next ssid/pwd pair in case the current wifi pair dont connect
