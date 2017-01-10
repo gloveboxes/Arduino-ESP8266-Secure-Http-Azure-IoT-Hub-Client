@@ -42,7 +42,7 @@ void initCloudConfig() {
   }
 }
 
-void initCloudConfig(String cs, const char *ssid, const char *pwd, const char *geo){
+void initCloudConfig(String cs, const char* certificateFingerprint, const char *ssid, const char *pwd, const char *geo){
   device.wifiPairs = 1;
   device.ssid = new const char*[device.wifiPairs];
   device.pwd = new const char*[device.wifiPairs];
@@ -53,6 +53,7 @@ void initCloudConfig(String cs, const char *ssid, const char *pwd, const char *g
   cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
   cloud.deviceId = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
   cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
+  cloud.certificateFingerprint = certificateFingerprint;
 }
 
 

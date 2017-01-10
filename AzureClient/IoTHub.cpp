@@ -25,9 +25,10 @@ String IoT::urlEncode(const char* msg)
     return encodedMsg;
 }
 
-String IoT::createSas(char* key, String url){  
-  String stringToSign = url + "\n" + _cloud->sasExpiryDate;
-
+String IoT::createSas(char* key, String url){    
+  _cloud->sasExpiryTime = now() + _cloud->sasExpiryPeriodInSeconds;
+  String stringToSign = url + "\n" + _cloud->sasExpiryTime;
+    
   // START: Create signature
   // https://raw.githubusercontent.com/adamvr/arduino-base64/master/examples/base64/base64.ino
   
@@ -49,7 +50,7 @@ String IoT::createSas(char* key, String url){
   base64_encode(encodedSign, sign, HASH_LENGTH); 
   
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + _cloud->sasExpiryDate;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + _cloud->sasExpiryTime;
   // END: create SAS  
 }
 
@@ -61,10 +62,33 @@ String IoT::buildHttpRequest(String data){
     "Content-Length: " + data.length() + "\r\n\r\n" + data;
 }
 
+const char* IoT::GetStringValue(String value){
+  int len = value.length() + 1;
+  char *temp = new char[len];
+  value.toCharArray(temp, len);
+  return temp;
+}
+
 void IoT::initialiseHub(){
-  String url = urlEncode(_cloud->host) + urlEncode(TARGET_URL) + (String)_cloud->deviceId;
+  _cloud->sasUrl = urlEncode(_cloud->host) + urlEncode(TARGET_URL) + (String)_cloud->deviceId;
   _cloud->endPoint = (String)TARGET_URL + (String)_cloud->deviceId + (String)IOT_HUB_END_POINT;
-  _cloud->fullSas =  createSas(_cloud->key, url);
+}
+
+bool IoT::generateSas(){
+  if (timeStatus() == timeNotSet) { return false; }
+    
+  if (!azureInitialised) { 
+    initialiseHub();
+    azureInitialised = true;
+  }
+
+  if (now() > _cloud->sasExpiryTime){
+    Serial.println("\n\r\n\rgenerating new sas\n\r");
+    delete[] _cloud->fullSas;
+    _cloud->fullSas = (char*)GetStringValue(createSas(_cloud->key, _cloud->sasUrl));
+  }
+
+  return true;
 }
 
 bool IoT::verifyServerFingerprint(){
@@ -76,12 +100,6 @@ bool IoT::verifyServerFingerprint(){
     Serial.println("Certificate fingerprint verification failed");
     ESP.restart();
   }
-}
-
-void IoT::initialiseAzure(){
-  if (azureInitialised) { return; }
-  initialiseHub();
-  azureInitialised = true;
 }
 
 bool IoT::connectToAzure() {
@@ -114,7 +132,8 @@ bool IoT::connectToAzure() {
 
 
 String IoT::send(String json){
-  initialiseAzure();
+  if (!generateSas()) {return "Sas not generated, likely cause is time not set";}
+  
   connectToAzure();
   
   tlsClient.flush();

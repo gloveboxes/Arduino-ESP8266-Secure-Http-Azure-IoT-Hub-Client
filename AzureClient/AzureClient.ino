@@ -150,20 +150,16 @@ SensorData data;
 IoT hub(&cloud);
 //Eventhub hub(&cloud);
 
-
-
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  cloud.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
-  cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
-  cloud.certificateFingerprint = certificateFingerprint;
+  device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
 }
 
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	delay(100);
 	Serial.println("");
 
@@ -173,41 +169,39 @@ void setup() {
 
 	initDeviceConfig();
  
-	initCloudConfig(connectionString, ssid, pwd, geo);
+	initCloudConfig(connectionString, certificateFingerprint, ssid, pwd, geo);
 	
 	//  initCloudConfig();  // alternate signature - read config from EEPROM
 
   initWifi();
+
+  getCurrentTime();
 }
 
 void loop() {
   measureSensor();
 
-	if (WiFi.status() == WL_CONNECTED) {
-		setLedState(On);
-    
-    //getCurrentTime();
-
-    publishToAzure();
-
-    if (device.deepSleepSeconds > 0) {
-      WiFi.mode(WIFI_OFF);
-      ESP.deepSleep(1000000 * device.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
-    }
-    else {
-      delay(cloud.publishRateInSeconds * 1000);  // limit publishing rate
-    }
-	}
-	else {
+	if (WiFi.status() != WL_CONNECTED) {
     setLedState(Off);
     initWifi();
     delay(500);
 	}
+	setLedState(On);
+  
+  publishToAzure();
+
+  if (device.deepSleepSeconds > 0) {
+    WiFi.mode(WIFI_OFF);
+    ESP.deepSleep(1000000 * device.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
+  }
+  else {
+    delay(device.publishRateInSeconds * 1000);  // limit publishing rate
+  }
 }
 
 void getCurrentTime(){
   int ntpRetryCount = 0;
-  while (timeStatus() == timeNotSet && ++ntpRetryCount < 10) { // get NTP time
+  while (timeStatus() == timeNotSet && ++ntpRetryCount < 20) { // get NTP time
     Serial.println(WiFi.localIP());
     setSyncProvider(getNtpTime);
     setSyncInterval(60 * 60);  

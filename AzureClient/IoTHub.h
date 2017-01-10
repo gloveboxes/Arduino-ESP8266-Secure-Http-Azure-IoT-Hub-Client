@@ -7,6 +7,7 @@
 #include "globals.h"
 #include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
+#include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
 
 
 class IoT
@@ -18,10 +19,13 @@ class IoT
   protected:
     CloudConfig* _cloud;//    SensorData* _data;
     String urlEncode(const char* msg);
+    const char* GetStringValue(String value);
 
   private:
     void initialiseHub();
     bool connectToAzure();
+    bool generateSas();
+
     void initialiseAzure();
     String createSas(char* key, String url);
     bool verifyServerFingerprint();
