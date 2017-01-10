@@ -1,9 +1,8 @@
 #include "IoTHub.h"
 
-IoT::IoT(CloudConfig* cloud, SensorData* data)
+IoT::IoT(CloudConfig* cloud)
 { 
   _cloud = cloud;
-  _data = data;
 }
 
 String IoT::urlEncode(const char* msg)

@@ -131,12 +131,10 @@
 #include "IoTHub.h"
 #include "EventHub.h"
 
-CloudConfig cloud;
-DeviceConfig device;
-SensorData data;
-IoT hub(&cloud, &data);
-//Eventhub hub(&cloud);
-
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=";
+const char* ssid = "NCW";
+const char* pwd = "malolos5459";
+const char* geo = "syd-master";
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
  for information on generating fingerprint
@@ -145,6 +143,14 @@ IoT hub(&cloud, &data);
  openssl x509 -noout -in cert.pem -fingerprint
 */
 const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:8F:8D:1D:92:EB:F1";
+
+CloudConfig cloud;
+DeviceConfig device;
+SensorData data;
+IoT hub(&cloud);
+//Eventhub hub(&cloud);
+
+
 
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 
@@ -162,24 +168,20 @@ void setup() {
 	Serial.println("");
 
   WiFi.mode(WIFI_OFF);
-//  pinMode(bmePowerPin, OUTPUT);
-//  digitalWrite(bmePowerPin, HIGH); 
-//  delay(2000);
 
   WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
 
 	initDeviceConfig();
  
-	initCloudConfig("HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=", "NCW", "malolos5459", "syd-house");
-//  initCloudConfig();  // alternate signature - read config from EEPROM
-//hub.init(&cloud);
+	initCloudConfig(connectionString, ssid, pwd, geo);
+	
+	//  initCloudConfig();  // alternate signature - read config from EEPROM
+
   initWifi();
 }
 
 void loop() {
-
   measureSensor();
-
 
 	if (WiFi.status() == WL_CONNECTED) {
 		setLedState(On);

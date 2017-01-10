@@ -7,18 +7,16 @@
 #include "globals.h"
 #include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
-#include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
 
 
 class IoT
 {
   public:
-    IoT(CloudConfig* cloud, SensorData* data);
+    IoT(CloudConfig* cloud);
     String send(String json);
     
   protected:
-    CloudConfig* _cloud;
-    SensorData* _data;
+    CloudConfig* _cloud;//    SensorData* _data;
     String urlEncode(const char* msg);
 
   private:

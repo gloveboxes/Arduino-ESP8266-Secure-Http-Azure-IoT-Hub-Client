@@ -1,23 +1,5 @@
 //http://hardwarefun.com/tutorials/url-encoding-in-arduino
-String urlEncode(const char* msg)
-{
-    const char *hex = "0123456789abcdef";
-    String encodedMsg = "";
 
-    while (*msg!='\0'){
-        if( ('a' <= *msg && *msg <= 'z')
-                || ('A' <= *msg && *msg <= 'Z')
-                || ('0' <= *msg && *msg <= '9') ) {
-            encodedMsg += *msg;
-        } else {
-            encodedMsg += '%';
-            encodedMsg += hex[*msg >> 4];
-            encodedMsg += hex[*msg & 15];
-        }
-        msg++;
-    }
-    return encodedMsg;
-}
 
 // http://arduino.stackexchange.com/questions/1013/how-do-i-split-an-incoming-string
 String splitStringByIndex(String data, char separator, int index)

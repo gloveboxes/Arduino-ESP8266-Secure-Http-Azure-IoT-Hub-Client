@@ -12,7 +12,7 @@
 class Eventhub : public IoT
 {
   public:
-    Eventhub(CloudConfig* cloud, SensorData* data) : IoT(cloud, data){};
+    Eventhub(CloudConfig* cloud) : IoT(cloud){};
     String createSas(char* key, String url);
     void initialiseHub();
     
