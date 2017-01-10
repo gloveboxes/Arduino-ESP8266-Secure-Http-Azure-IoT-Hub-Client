@@ -16,6 +16,8 @@ void initBmp280(){
   bmp280Calibration = getTemperatureCalibration();
   
   bmp280Initialised = true;
+
+  Serial.print("initialised");
 }
 
 
@@ -27,6 +29,7 @@ void getBmp280Readings(){
    
   for (int c = 0; c < numberOfSamples; c++) {  
     data.temperature += bmp280.readTemperature() + bmp280Calibration; 
+    Serial.print(data.temperature);
     data.pressure += (int)((int)( bmp280.readPressure() + 0.5) / 100);
     delay(500);
   }

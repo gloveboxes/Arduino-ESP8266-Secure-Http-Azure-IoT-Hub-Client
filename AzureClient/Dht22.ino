@@ -22,9 +22,9 @@ void getDht22Readings(){
   initDht22();
 
   do {
-    delay(50);
+    delay(100);
     data.temperature = dht22.readTemperature(); 
     data.humidity = dht22.readHumidity();
-  } while ((isnan(data.temperature) || isnan(data.humidity)) && ++retryCount < 10);
+  } while ((isnan(data.temperature) || isnan(data.humidity)) && ++retryCount < 20);
 }
 

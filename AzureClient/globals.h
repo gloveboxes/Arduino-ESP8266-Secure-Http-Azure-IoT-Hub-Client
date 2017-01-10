@@ -1,7 +1,10 @@
-enum CloudMode {
-  IoTHub,
-  EventHub
-};
+#ifndef Globals_h
+#define Globals_h
+
+//enum CloudMode {
+//  IoTHub,
+//  EventHub
+//};
 
 enum LedState {
   Off,
@@ -31,10 +34,10 @@ struct SensorData{
   float humidity;
   int pressure;
   int light;
+  int msgId;
 };
 
 struct CloudConfig {
-  CloudMode cloudMode = IoTHub;
   unsigned int publishRateInSeconds = 60; // defaults to once a minute
   // WARNING EXPIRY SET TO 10 YEARS FROM NOW.  
   // Epoch Timestamp Conversion Tool http://www.epochconverter.com/
@@ -43,6 +46,7 @@ struct CloudConfig {
   // EVENT Hubs Devices can only be excluded by policy so a more sensible expiry should be tried and you'd need to device a moving expiry window
   unsigned int sasExpiryDate = 1737504000;  // Expires Wed, 22 Jan 2025 00:00:00 GMT
   const char *host;
+  const char* certificateFingerprint;
   char *key;
   const char *id;
   const char *geo;
@@ -66,4 +70,6 @@ struct DeviceConfig {
 
 
 };
+
+#endif
 

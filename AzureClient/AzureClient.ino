@@ -128,19 +128,32 @@
 #include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
 #include "globals.h"        // global structures and enums used by the applocation
+#include "IoTHub.h"
+#include "EventHub.h"
 
 CloudConfig cloud;
 DeviceConfig device;
 SensorData data;
+IoT hub(&cloud, &data);
+//Eventhub hub(&cloud);
+
+/* 
+ http://hassansin.github.io/certificate-pinning-in-nodejs
+ for information on generating fingerprint
+ From Ubuntu subsystem on Windows 10
+ echo -n | openssl s_client -connect IoTCampAU.azure-devices.net:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > cert.pem
+ openssl x509 -noout -in cert.pem -fingerprint
+*/
+const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:8F:8D:1D:92:EB:F1";
 
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
-  device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+  device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-  cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  cloud.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
   cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+  cloud.certificateFingerprint = certificateFingerprint;
 }
 
 void setup() {
@@ -148,27 +161,35 @@ void setup() {
 	delay(100);
 	Serial.println("");
 
+  WiFi.mode(WIFI_OFF);
+//  pinMode(bmePowerPin, OUTPUT);
+//  digitalWrite(bmePowerPin, HIGH); 
+//  delay(2000);
+
   WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
 
 	initDeviceConfig();
  
-//	initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=oH8NYVmQVbFckto98m5h9XXYesslf00mZuFDs89cck0=", "YourSSID", "WiFiPwd", "Sydney");
-  initCloudConfig();  // alternate signature - read config from EEPROM
-
+	initCloudConfig("HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=", "NCW", "malolos5459", "syd-house");
+//  initCloudConfig();  // alternate signature - read config from EEPROM
+//hub.init(&cloud);
   initWifi();
 }
 
 void loop() {
+
   measureSensor();
+
 
 	if (WiFi.status() == WL_CONNECTED) {
 		setLedState(On);
     
-    getCurrentTime();
+    //getCurrentTime();
 
     publishToAzure();
 
     if (device.deepSleepSeconds > 0) {
+      WiFi.mode(WIFI_OFF);
       ESP.deepSleep(1000000 * device.deepSleepSeconds, WAKE_RF_DEFAULT); // GPIO16 needs to be tied to RST to wake from deepSleep. Execute restarts from beginning of sketch
     }
     else {
@@ -178,7 +199,7 @@ void loop() {
 	else {
     setLedState(Off);
     initWifi();
-    delay(250);
+    delay(500);
 	}
 }
 
@@ -192,11 +213,12 @@ void getCurrentTime(){
 }
 
 void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
-  getFakeWeatherReadings();
+//  getFakeWeatherReadings();
 //  getDht11Readings();
 //  getDht22Readings();
 //  getBmp180Readings();
 //  getBmp280Readings();
+  getBme280Readings();
 //  getLdrReadings(); // when enabled causes the DHT11 sensor to fail 
 }
 
@@ -204,4 +226,8 @@ void getFakeWeatherReadings() {
 	data.temperature = 25;
 	data.humidity = 50;
 	data.pressure = 1000;
+
+  Serial.println(data.temperature);
+  Serial.println(data.pressure);
+  Serial.println(data.humidity);
 }
