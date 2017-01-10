@@ -62,8 +62,8 @@ String IoT::buildHttpRequest(String data){
 }
 
 void IoT::initialiseHub(){
-  String url = urlEncode(_cloud->host) + urlEncode(TARGET_URL) + (String)_cloud->id;
-  _cloud->endPoint = (String)TARGET_URL + (String)_cloud->id + (String)IOT_HUB_END_POINT;
+  String url = urlEncode(_cloud->host) + urlEncode(TARGET_URL) + (String)_cloud->deviceId;
+  _cloud->endPoint = (String)TARGET_URL + (String)_cloud->deviceId + (String)IOT_HUB_END_POINT;
   _cloud->fullSas =  createSas(_cloud->key, url);
 }
 
@@ -88,7 +88,7 @@ bool IoT::connectToAzure() {
   if (tlsClient.connected()) { return true;}  
   Serial.println();
   delay(500); // give network connection a moment to settle
-  Serial.print(_cloud->id);
+  Serial.print(_cloud->deviceId);
   Serial.print(" connecting to ");
   Serial.println(_cloud->host);
   if (WiFi.status() != WL_CONNECTED) { return false; }

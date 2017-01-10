@@ -23,7 +23,7 @@ String Eventhub::createSas(char *key, String url){
   // END: Get base64 of signature
 
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + _cloud->sasExpiryDate +"&skn=" + _cloud->id;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + _cloud->sasExpiryDate +"&skn=" + _cloud->deviceId;
   // END: create SAS
 }
 

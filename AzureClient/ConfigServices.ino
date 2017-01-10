@@ -27,7 +27,7 @@ void initCloudConfig() {
 
   cloud.host = GetValue(root["host"]);
   cloud.key = (char*)GetValue(root["key"]);
-  cloud.id = GetValue(root["deviceId"]);
+  cloud.deviceId = GetValue(root["deviceId"]);
   data.geo = GetValue(root["geo"]);
 
 
@@ -51,7 +51,7 @@ void initCloudConfig(String cs, const char *ssid, const char *pwd, const char *g
   data.geo = geo;
   
   cloud.host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
-  cloud.id = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
+  cloud.deviceId = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
   cloud.key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
 }
 

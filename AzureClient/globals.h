@@ -42,7 +42,7 @@ struct CloudConfig {
   const char *host;
   const char* certificateFingerprint;
   char *key;
-  const char *id;
+  const char *deviceId;
   unsigned long lastPublishTime = 0;
   String fullSas;
   String endPoint;
