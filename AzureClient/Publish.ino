@@ -5,7 +5,7 @@ String serializeData(){
   JsonObject& root = jsonBuffer.createObject();
 
 //  root["Dev"] = cloud.id;
-//  root["Utc"] = GetISODateTime();
+  root["Utc"] = GetISODateTime();
   root["Celsius"] = data.temperature;
   root["Humidity"] = data.humidity;
   root["hPa"] = data.pressure;

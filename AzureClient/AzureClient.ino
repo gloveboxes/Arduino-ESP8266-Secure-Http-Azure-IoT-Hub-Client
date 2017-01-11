@@ -45,9 +45,10 @@
   - ArduinoJson
   - Time
   - Adafruit BMP085 (Unified version)
-  - DHT (DON’T install the unified version)
-  - Adafruit Sensor
+  - Adafruit DHT (DON’T install the unified version)
+  - Adafruit Unified Sensor
   - Adafruit BMP280
+  - Adafruit BME280
 
 
   CLOUD CONFIGURATION:
@@ -130,8 +131,12 @@
 #include "globals.h"        // global structures and enums used by the applocation
 #include "IoTHub.h"
 #include "EventHub.h"
+#include "Bme280.h"
+#include "bmp280.h"
+#include "bmp180.h"
+#include "DhtSensor.h"
 
-const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=";
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-board;SharedAccessKey=gsadE27VKloflZygS+Pvfye7cnm042uD4vPQdDC1yOE=";
 const char* ssid = "NCW";
 const char* pwd = "malolos5459";
 const char* geo = "syd-master";
@@ -150,12 +155,24 @@ SensorData data;
 IoT hub(&cloud);
 //Eventhub hub(&cloud);
 
+/*
+ * Uncomment required sensor
+ */
+
+//Sensor sensor(&data);
+//Bmp180 sensor(&data);
+//Bmp280 sensor(&data);
+Bme280 sensor(&data);
+//DhtSensor sensor(&data, dht11);
+//DhtSensor sensor(&data, dht22);
+
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+//  device.sensorMode = DhtShieldMode;
 }
 
 void setup() {
@@ -179,7 +196,7 @@ void setup() {
 }
 
 void loop() {
-  measureSensor();
+  sensor.measure();
 
 	if (WiFi.status() != WL_CONNECTED) {
     setLedState(Off);
@@ -214,7 +231,7 @@ void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
 //  getDht22Readings();
 //  getBmp180Readings();
 //  getBmp280Readings();
-  getBme280Readings();
+//  getBme280Readings();
 //  getLdrReadings(); // when enabled causes the DHT11 sensor to fail 
 }
 
