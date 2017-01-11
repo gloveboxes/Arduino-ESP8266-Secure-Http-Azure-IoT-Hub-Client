@@ -1,6 +1,6 @@
 #include "Sensor.h"
 
-Sensor::Sensor(SensorData* data)
+Sensor::Sensor(Telemetry* data)
 { 
   _data = data;
 }

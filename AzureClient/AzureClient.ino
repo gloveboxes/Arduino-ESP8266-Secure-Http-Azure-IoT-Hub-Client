@@ -139,7 +139,7 @@
 const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-board;SharedAccessKey=gsadE27VKloflZygS+Pvfye7cnm042uD4vPQdDC1yOE=";
 const char* ssid = "NCW";
 const char* pwd = "malolos5459";
-const char* geo = "syd-master";
+const char* geo = "sydney";
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
  for information on generating fingerprint
@@ -151,7 +151,7 @@ const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:
 
 CloudConfig cloud;
 DeviceConfig device;
-SensorData data;
+Telemetry data;
 IoT hub(&cloud);
 //Eventhub hub(&cloud);
 
@@ -171,7 +171,7 @@ IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 void initDeviceConfig() { // Example device configuration
   device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  device.publishRateInSeconds = 15;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
 }
 
 void setup() {

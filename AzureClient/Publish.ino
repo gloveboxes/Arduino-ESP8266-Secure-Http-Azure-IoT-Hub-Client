@@ -27,7 +27,7 @@ void publishToAzure() {
 
   // https://msdn.microsoft.com/en-us/library/azure/dn790664.aspx  
   
-  setLedState(Off);
+  setLedState(On);
 
   String response = hub.send(serializeData());
 
@@ -38,7 +38,7 @@ void publishToAzure() {
   Serial.print(", Response code: ");
   Serial.println(response);
 
-  setLedState(On);
+  setLedState(Off);
 }
 
 

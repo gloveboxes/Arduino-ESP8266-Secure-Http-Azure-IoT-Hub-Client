@@ -20,7 +20,7 @@ enum BoardType {
   Other
 };
 
-struct SensorData{
+struct Telemetry{
   float temperature;
   float humidity;
   int pressure;

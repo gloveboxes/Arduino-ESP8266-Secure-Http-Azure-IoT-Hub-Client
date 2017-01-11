@@ -7,12 +7,12 @@
 class Sensor
 {
   public:
-    Sensor(SensorData* data);
+    Sensor(Telemetry* data);
     void measure();
 
   protected:
     bool initialised;
-    SensorData* _data;  
+    Telemetry* _data;  
 };
 
 #endif

@@ -17,7 +17,7 @@ class IoT
     String send(String json);
     
   protected:
-    CloudConfig* _cloud;//    SensorData* _data;
+    CloudConfig* _cloud;//    Telemetry* _data;
     String urlEncode(const char* msg);
     const char* GetStringValue(String value);
 

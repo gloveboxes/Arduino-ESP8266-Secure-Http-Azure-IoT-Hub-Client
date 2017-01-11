@@ -9,7 +9,7 @@
 class Bme280 : public Sensor
 {
   public:
-    Bme280(SensorData* data) : Sensor(data){};
+    Bme280(Telemetry* data) : Sensor(data){};
     void measure();
 
   private:
