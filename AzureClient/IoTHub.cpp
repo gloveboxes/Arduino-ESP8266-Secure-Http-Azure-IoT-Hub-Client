@@ -83,7 +83,6 @@ bool IoT::generateSas(){
   }
 
   if (now() > _cloud->sasExpiryTime){
-    Serial.println("\n\r\n\rgenerating new sas\n\r");
     delete[] _cloud->fullSas;
     _cloud->fullSas = (char*)GetStringValue(createSas(_cloud->key, _cloud->sasUrl));
   }
