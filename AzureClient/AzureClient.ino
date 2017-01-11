@@ -163,16 +163,15 @@ IoT hub(&cloud);
 //Bmp180 sensor(&data);
 //Bmp280 sensor(&data);
 Bme280 sensor(&data);
-//DhtSensor sensor(&data, dht11);
-//DhtSensor sensor(&data, dht22);
+//DhtSensor sensor(&data, &device, dht11);
+//DhtSensor sensor(&data, &device, dht22);
 
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
 
 void initDeviceConfig() { // Example device configuration
-  device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
+  device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
-//  device.sensorMode = DhtShieldMode;
 }
 
 void setup() {

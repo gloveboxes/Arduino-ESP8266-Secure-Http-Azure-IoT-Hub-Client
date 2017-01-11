@@ -32,7 +32,7 @@ struct SensorData{
 
 struct CloudConfig {
   time_t  sasExpiryTime = 0;
-  int sasExpiryPeriodInSeconds = 60 * 1; // Default to 15 minutes
+  int sasExpiryPeriodInSeconds = 60 * 15; // Default to 15 minutes
   const char* host;
   const char* certificateFingerprint;
   char* key;

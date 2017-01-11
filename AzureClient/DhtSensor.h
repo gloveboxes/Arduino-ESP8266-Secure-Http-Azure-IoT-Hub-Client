@@ -11,8 +11,9 @@ enum DhtType {
 
 class DhtSensor : public Sensor {  
   public:
-    DhtSensor(SensorData* data, DhtType dhtType) : Sensor(data){
+    DhtSensor(SensorData* data, DeviceConfig* device, DhtType dhtType) : Sensor(data){
       _dhtType = dhtType;
+      device->sensorMode = DhtShieldMode;
     };
     void measure();
 
