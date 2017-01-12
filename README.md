@@ -1,13 +1,13 @@
-#Securely stream data from ESP8266 MCUs to Azure IoT Hub over HTTPS/REST
+# Securely stream data from ESP8266 MCUs to Azure IoT Hub over HTTPS/REST
 
-###Purpose
+### Purpose
 
 This solution securely streams sensor data directly to 
 [Azure IoT Hub](https://azure.microsoft.com/en-us/documentation/articles/iot-hub-what-is-iot-hub/) 
 or [Azure Event Hub](https://azure.microsoft.com/en-us/services/event-hubs/) over HTTPS calling Azure REST APIs from ESP8266 MCUs.
 
 
-###Device Platform
+### Device Platform
 
 
 The [ESP8266](https://en.wikipedia.org/wiki/ESP8266) is a great commodity priced [Arduino](https://github.com/esp8266/Arduino) 
@@ -19,16 +19,24 @@ This project is implemented and tested on the following ESP8266 based developmen
 2. [WeMos D1 Mini](http://www.wemos.cc/) 
 3. and [SparkFun ESP8266 Thing](https://www.sparkfun.com/products/13711)
 
-###Firmware
+### Firmware
 
 [Arduino core for ESP8266 WiFi chip V2.0](https://github.com/esp8266/Arduino) firmware adds HTTPS ([TLS](http://axtls.sourceforge.net/) 1.0 and 1.1) support, making this a viable platform for secure IoT data streaming. See [Security Discussion](https://github.com/esp8266/Arduino/issues/43) for more information.
 
+### IoT Hub Certificate Verification
 
+This sample verifies your IoT Hub Server Certificate to mitigate against Man in the Middle Attacks.
 
+The Server Certificate Fingerprint was generated as follows:-
 
-###Azure IoT Hub and Azure Event Hub
+1. From Bash on Ubuntu on Windows (10) or Linux
+2. echo -n | openssl s_client -connect IoTCampAU.azure-devices.net:8883 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > cert.pem
+3. openssl x509 -noout -in cert.pem -fingerprint
+4. [See Certificate Pinning article for more information](http://hassansin.github.io/certificate-pinning-in-nodejs)
 
-IoT Hub is designed to "Connect, monitor, and control millions of IoT assets", Azure Event Hubs is 
+### Azure IoT Hub
+
+IoT Hub is designed to "Connect, monitor, and control millions of IoT assets" and is
 designed for internet scale data ingestion. 
 
 [Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/), 
@@ -37,7 +45,7 @@ designed for internet scale data ingestion.
 
 For more background information read this "[Stream Analytics & Power BI: A real-time analytics dashboard for streaming data](https://azure.microsoft.com/en-us/documentation/articles/stream-analytics-power-bi-dashboard/)" article.
 
-###Acknowledgments
+### Acknowledgments
 
 Thanks to [Štěpán Bechynský](https://microsoft.hackster.io/en-US/stepanb) "[Proof of Concept – NodeMCU, Arduino and 
 Azure Event Hub](https://microsoft.hackster.io/en-US/stepanb/proof-of-concept-nodemcu-arduino-and-azure-event-hub-a33043)" project 
@@ -47,93 +55,54 @@ to stream data directly to Azure IoT Hub or Azure Event Hubs over HTTPS.
 
 
 
-#Setup and Deployment Summary
+# Setup and Deployment Summary
 
 1. Setup your Azure IoT Hub. There is a free 8000 message a day subscription to get started.
 2. Register your device with Azure IoT Hub.
-3. Flash Azure and Network configuration information to EEPROM
 4. Update the main AzureClient.ino sketch
 5. Deploy the solution to your ESP8266 based device.
 6. View data with Device Explorer
 7. Optionally: Visualise your data in real time with Azure Stream Analytics and Power BI.
 
 
-#Setting Up Azure IoT Hub
+# Setting Up Azure IoT Hub
 
 Follow lab [Setting Up Azure IoT](http://thinglabs.io/workshop/cs/nightlight/setup-azure-iot-hub/) to provision an Azure IoT Hub and an IoT Hub device. 
 
 
 
-#Azure Configuration
+# Solution Configuration
 
-Right mouse click the device you setup in Device Explorer to obtain device id, key and connection string information.
+    const char* connectionString = "HostName=YourIoTHub.azure-devices.net;DeviceId=syd-board;SharedAccessKey=gsadE27VKloflZygS+Pvfye7cnm042uD4vPQdDC1yOE=";
+    const char* ssid = "Your WiFi SSID";
+    const char* pwd = "Your Wifi Password";
+    const char* geo = "Your geo location for the sensor";
 
-The function initCloudConfig() called from the setup() function in AzureClient.ino has two signatures. 
+### Select Sensor
 
+The sample includes support for these sensors: Fake Sensor, BMP180, BMP280, BME280, DHT11 and the DHT22.
 
-  
-    // Inline cloud and network configuration information
-    
-    initCloudConfig("IoT hub device connection string", "Case Sensitive WiFi SSID", "WiFi password", "Geo location of the device"). 
-   
-    Example:
-    
-    initCloudConfig("HostName=YourIoTHub.azure-devices.net;DeviceId=YourDeviceId;SharedAccessKey=YourDeviceKey", "SSID", "Password", "Sydney");
-    
-    or 
-    
-    //To read cloud and network configuration from EEPROM. This is useful if deploying multiple devices
-    
-    initCloudConfig(); 
-    
+Uncomment the sensor you wish to use.
 
-
-##Optional EEPROM Configuration
-
-You can burn cloud and network configuration information to the device EEPROM.  To configure the EEPROM open the SetEEPROMConfiguration.ino found in the SetEEPROMConfiguration folder and update the following variables:-
-
-  - Wi-Fi SSID and password pairs, put in priority order.
-  - Wifi - Is the number of WiFi ssid and password pairs
-  - Azure IoT Hub or Event Bus Host name eg "MakerDen.azure-devices.net", Device ID, and Key. For IoT Hub get this information from the Device Explorer, for Event Hub, get from Azure Management Portal.
-  - Geo location of the device
-  
-Upload this sketch to the device to write configuration settings to EEPROM.
-
-**Be sure to call function initCloudConfig() with no parameters to ensure Azure and Network parameters are read from EEPROM.**
-
-
-Next upload the AzureClient sketch which will 
-read this configuration information from the EEPROM. 
+    Sensor sensor(&data);  // Fake sample environmental data
+    //Bmp180 sensor(&data);
+    //Bmp280 sensor(&data);
+    //Bme280 sensor(&data);
+    //DhtSensor sensor(&data, &device, dht11);
+    //DhtSensor sensor(&data, &device, dht22);
 
 
 
-
-
-#Device Configuration 
-
-You need to configure the initDeviceConfig() function in the AzureClient.ino file.
-
-
-    void initDeviceConfig() {  // Example device configuration
-        device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
-        device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-        cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
-        cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
-        cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
-    }
-
-Then upload the sketch to your device.
-
-#Viewing Data
+# Viewing Data
 
 From Device Explorer, head to the Data tab, select your device, enable consumer group then click Monitor.
 
 ![IoT Hub Data](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/IoTHubData.JPG)
 
 
-#Visualising Data
+# Visualising Data
 
-##Azure Stream Analytics
+## Azure Stream Analytics
 
 [Azure Stream Analytics](https://azure.microsoft.com/en-us/services/stream-analytics/) enables you to gain 
 real-time insights in to your device, sensor, infrastructure, and application data.
@@ -153,18 +122,18 @@ See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visual
     GROUP BY Dev, TumblingWindow (mi, 10)
 
  
-##Power BI
+## Power BI
 
 [Microsoft Power BI](https://powerbi.microsoft.com) makes it easy to visualise, organize and better understand your data.
 
 Follow the notes in the See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab and modify the real time report as per this image.
 
-###Power BI Designer Setup
+### Power BI Designer Setup
 
 ![Power BI Designer Setup](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/PowerBIDesigner.JPG)
 
 
-###Power BI Report Viewer
+### Power BI Report Viewer
 
 View on the web or with the Power BI apps available on iOS, Android and Windows.
 
@@ -172,7 +141,7 @@ View on the web or with the Power BI apps available on iOS, Android and Windows.
 
 
 
-#Data Schema
+# Data Schema
 
 The AzureClient sketch streams data in the following JSON format, of course you can change this:)
 
@@ -181,7 +150,7 @@ The AzureClient sketch streams data in the following JSON format, of course you 
 
 
 
-#ESP8266 Based Development Boards
+# ESP8266 Based Development Boards
 
 
 There are a number of ESP8266 based development boards available so be sure to check out this great article 
@@ -189,7 +158,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 
 
-##NodeMCU V2 with BMP180 Sensor
+## NodeMCU V2 with BMP180 Sensor
 
 1. [NodeMCU v2](http://tronixlabs.com.au/wireless/esp8266/nodemcu-v2-lua-based-esp8266-development-kit)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com.au/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
@@ -198,9 +167,9 @@ There are a number of ESP8266 based development boards available so be sure to c
 
 ![schematic](https://raw.githubusercontent.com/gloveboxes/Arduino-NodeMCU-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/NodeMCU%20MQTT%20Board_bb.jpg)
 
-##WeMos D1 Mini MCU
+## WeMos D1 Mini MCU
 
-###WeMos D1 Mini with BMP180 Sensor
+### WeMos D1 Mini with BMP180 Sensor
 
 1. [WeMos D1 Mini](http://www.wemos.cc/)
 2. [BMP180 Barometric Pressure Sensor](http://tronixlabs.com.au/sensors/altitude/bmp180-barometric-pressure-sensor-board/)
@@ -211,7 +180,7 @@ There are a number of ESP8266 based development boards available so be sure to c
 ![WeMos D1 Mini BMP180](https://raw.githubusercontent.com/gloveboxes/Arduino-ESP8266-Secure-Azure-IoT-Hub-Client/master/AzureClient/Fritzing/WeMosD1Mini_bb.jpg)
    
 
-###WeMos D1 Mini with DHT Shield Sensor
+### WeMos D1 Mini with DHT Shield Sensor
 
 No wiring required, just solder the supplied header pins for the WeMos and the DHT Sensor shield.
 
@@ -222,27 +191,27 @@ No wiring required, just solder the supplied header pins for the WeMos and the D
 
 
  
-#Software Requirements
+# Software Requirements
 
-##Drivers
+## Drivers
 
 1. NodeMCU - On Windows, Mac and Linux you will need to install the latest [CP210x USB to UART Bridge VCP Drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx).
 2. WeMos - On Windows and Mac install the latest [Ch340G drivers](http://www.wemos.cc/Tutorial/get_started_in_arduino.html). No drivers required for Linux.
 3. [ESP8266 Thing Development Board Hookup Guide](https://learn.sparkfun.com/tutorials/esp8266-thing-development-board-hookup-guide/hardware-setup)
 
 
-##Arduino IDE
+## Arduino IDE
 
-As at April 2015 use:-
+As at Jan 2017 use:-
 
-1. [Arduino IDE 1.6.8](https://www.arduino.cc/en/Main/Software).
-2. ESP8266 Board Manager 2.1 or better required for HTTPS/TLS Secure Client support.
+1. [Arduino IDE 1.8.1](https://www.arduino.cc/en/Main/Software).
+2. ESP8266 Board Manager 2.3 or better required for HTTPS/TLS Secure Client support.
 
-##Visual Studio
+## Visual Studio
 
 There an fantastic plugin for Visual Studio that adds Arduino support from [Visual Micro](http://www.visualmicro.com/).  IntelliSence, auto complete, debugging, it doesn't get much better:)
 
-##Arduino Boards Manager ESP8266 Support
+## Arduino Boards Manager ESP8266 Support
 
 Arduino version 1.6.4 and above allows installation of third-party platform packages using Boards Manager.
 
@@ -253,6 +222,6 @@ Arduino version 1.6.4 and above allows installation of third-party platform pack
 5. Select NodeMCU or WeMos D1 Mini Board: Tools -> Board -> NodeMCU 1.0 (ESP-12E module) or WeMos D1 Mini
 6. Set Port and Upload Speed: Tools.  Note, you may need to try different port speeds to successfully flash the device. Faster is better as each time you upload the code to your device you are re-flashing the complete ROM not just your code.
 
-#ESP8266 Arduino Core Documentation 
+# ESP8266 Arduino Core Documentation 
 
 Be sure to read the [ESP8266 Arduino Core Documentation](http://esp8266.github.io/Arduino/versions/2.0.0/) - there are some minor gotchas.
