@@ -153,16 +153,15 @@ CloudConfig cloud;
 DeviceConfig device;
 Telemetry data;
 IoT hub(&cloud);
-//Eventhub hub(&cloud);
 
 /*
  * Uncomment required sensor
  */
 
-//Sensor sensor(&data);
+Sensor sensor(&data);  // Fake sample environmental data
 //Bmp180 sensor(&data);
 //Bmp280 sensor(&data);
-Bme280 sensor(&data);
+//Bme280 sensor(&data);
 //DhtSensor sensor(&data, &device, dht11);
 //DhtSensor sensor(&data, &device, dht22);
 
