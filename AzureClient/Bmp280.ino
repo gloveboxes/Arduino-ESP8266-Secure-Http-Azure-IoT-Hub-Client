@@ -24,7 +24,6 @@ void getBmp280Readings(){
    
   for (int c = 0; c < numberOfSamples; c++) {  
     data.temperature += bmp280.readTemperature(); 
-    Serial.print(data.temperature);
     data.pressure += (int)((int)( bmp280.readPressure() + 0.5) / 100);
     delay(500);
   }
