@@ -110,16 +110,20 @@ real-time insights in to your device, sensor, infrastructure, and application da
 See the [Visualizing IoT Data](http://thinglabs.io/workshop/cs/nightlight/visualize-iot-with-powerbi/) lab.  Replace the query in that lab with the following and be sure to change the time zone to your local time zone offset.  Australia (AEDST) is currently +11 hours.
 
     SELECT
-        DateAdd(minute,-5,System.TimeStamp) AS WinStartTime, 
-        System.TimeStamp AS WinEndTime, 
-        DateAdd(Hour, 11, System.TIMESTAMP) AS AUTimezone,
-        Dev AS [DeviceId],
-        AVG(Celsius) AS [Celsius], 
-        AVG(hPa) AS [hPa],
-        AVG(Humidity) AS [Humidity]        
-    INTO [OutputPBI]
-    FROM [Input]  TIMESTAMP BY UTC
-    GROUP BY Dev, TumblingWindow (mi, 10)
+        iothub.connectiondeviceid deviceid,
+        Geo AS GeoLocation,
+        Max(DateAdd(Hour, 10, EventEnqueuedUtcTime)) AS TimeCreated, -- AU EST UTC + 10
+        Avg(Celsius) AS Temperature,
+        AVG(Humidity) AS Humidity,
+        AVG(Light) AS Light,
+        AVG(HPa) AS AirPressure
+    INTO
+        [PowerBI]
+    FROM
+        [TelemetryHUB] TIMESTAMP BY EventEnqueuedUtcTime
+    GROUP BY
+        iothub.connectiondeviceid, Geo,
+        TumblingWindow(minute, 30)
 
  
 ## Power BI
@@ -145,8 +149,7 @@ View on the web or with the Power BI apps available on iOS, Android and Windows.
 
 The AzureClient sketch streams data in the following JSON format, of course you can change this:)
 
-
-    {"Dev":"DeviceId","Geo":"2011","Celsius":27,"hPa":1016,"Humidity":50,"Light":99,"Utc":"2015-12-06T23:07:04","Id":103}
+    {"Utc":"2017-01-12T08:00:38","Celsius":25.00,"Humidity":50.00,"hPa":1000,"Light":0,"Geo":"sydney","Schema":1,"Mem":21368,"Id":2}
 
 
 

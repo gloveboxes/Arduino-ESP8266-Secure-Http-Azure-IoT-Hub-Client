@@ -11,6 +11,7 @@ String serializeData(){
   root["hPa"] = data.pressure;
   root["Light"] = data.light;
   root["Geo"] = data.geo;  
+  root["Schema"] = 1;
 
   //instrumentation
 //  root["WiFi"] = device.WiFiConnectAttempts;
