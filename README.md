@@ -30,7 +30,7 @@ This sample verifies your IoT Hub Server Certificate to mitigate against Man in 
 The Server Certificate Fingerprint was generated as follows:-
 
 1. From Bash on Ubuntu on Windows (10) or Linux
-2. echo -n | openssl s_client -connect IoTCampAU.azure-devices.net:8883 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > cert.pem
+2. echo -n | openssl s_client -connect IoTCampAU.azure-devices.net:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > cert.pem
 3. openssl x509 -noout -in cert.pem -fingerprint
 4. [See Certificate Pinning article for more information](http://hassansin.github.io/certificate-pinning-in-nodejs)
 
