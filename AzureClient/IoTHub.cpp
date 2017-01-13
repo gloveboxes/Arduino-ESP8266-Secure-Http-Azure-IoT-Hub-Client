@@ -1,9 +1,9 @@
 #include "IoTHub.h"
 
-IoT::IoT(CloudConfig* cloud)
-{ 
-  _cloud = cloud;
-}
+//IoT::IoT(CloudConfig* cloud)
+//{ 
+//  _cloud = cloud;
+//}
 
 String IoT::urlEncode(const char* msg)
 {
@@ -26,8 +26,8 @@ String IoT::urlEncode(const char* msg)
 }
 
 String IoT::createSas(char* key, String url){    
-  _cloud->sasExpiryTime = now() + _cloud->sasExpiryPeriodInSeconds;
-  String stringToSign = url + "\n" + _cloud->sasExpiryTime;
+  sasExpiryTime = now() + sasExpiryPeriodInSeconds;
+  String stringToSign = url + "\n" + sasExpiryTime;
     
   // START: Create signature
   // https://raw.githubusercontent.com/adamvr/arduino-base64/master/examples/base64/base64.ino
@@ -50,14 +50,14 @@ String IoT::createSas(char* key, String url){
   base64_encode(encodedSign, sign, HASH_LENGTH); 
   
   // SharedAccessSignature
-  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + _cloud->sasExpiryTime;
+  return "sr=" + url + "&sig="+ urlEncode(encodedSign) + "&se=" + sasExpiryTime;
   // END: create SAS  
 }
 
 String IoT::buildHttpRequest(String data){  
-  return "POST " + _cloud->endPoint + " HTTP/1.1\r\n" +
-    "Host: " + _cloud->host + "\r\n" +
-    "Authorization: SharedAccessSignature " + _cloud->fullSas + "\r\n" +
+  return "POST " + endPoint + " HTTP/1.1\r\n" +
+    "Host: " + host + "\r\n" +
+    "Authorization: SharedAccessSignature " + fullSas + "\r\n" +
     "Content-Type: application/atom+xml;type=entry;charset=utf-8\r\n" +
     "Content-Length: " + data.length() + "\r\n\r\n" + data;
 }
@@ -70,8 +70,8 @@ const char* IoT::GetStringValue(String value){
 }
 
 void IoT::initialiseHub(){
-  _cloud->sasUrl = urlEncode(_cloud->host) + urlEncode(TARGET_URL) + (String)_cloud->deviceId;
-  _cloud->endPoint = (String)TARGET_URL + (String)_cloud->deviceId + (String)IOT_HUB_END_POINT;
+  sasUrl = urlEncode(host) + urlEncode(TARGET_URL) + (String)deviceId;
+  endPoint = (String)TARGET_URL + (String)deviceId + (String)IOT_HUB_END_POINT;
 }
 
 bool IoT::generateSas(){
@@ -82,18 +82,18 @@ bool IoT::generateSas(){
     azureInitialised = true;
   }
 
-  if (now() > _cloud->sasExpiryTime){
-    delete[] _cloud->fullSas;
-    _cloud->fullSas = (char*)GetStringValue(createSas(_cloud->key, _cloud->sasUrl));
+  if (now() > sasExpiryTime){
+    delete[] fullSas;
+    fullSas = (char*)GetStringValue(createSas(key, sasUrl));
   }
 
   return true;
 }
 
 bool IoT::verifyServerFingerprint(){
-  if (tlsClient.verify(_cloud->certificateFingerprint, _cloud->host)) {
+  if (tlsClient.verify(certificateFingerprint, host)) {
     Serial.print("Certificate fingerprint verified against ");
-    Serial.print(_cloud->host);
+    Serial.print(host);
     Serial.println(" sucessfully");
   } else {
     Serial.println("Certificate fingerprint verification failed");
@@ -105,11 +105,11 @@ bool IoT::connectToAzure() {
   if (tlsClient.connected()) { return true;}  
   Serial.println();
   delay(500); // give network connection a moment to settle
-  Serial.print(_cloud->deviceId);
+  Serial.print(deviceId);
   Serial.print(" connecting to ");
-  Serial.println(_cloud->host);
+  Serial.println(host);
   if (WiFi.status() != WL_CONNECTED) { return false; }
-  if (!tlsClient.connect(_cloud->host, 443)) {      // Use WiFiClientSecure class to create TLS connection
+  if (!tlsClient.connect(host, 443)) {      // Use WiFiClientSecure class to create TLS connection
     Serial.print("Host connection failed.  WiFi IP Address: ");
     Serial.println(WiFi.localIP());
 
@@ -152,4 +152,44 @@ String IoT::send(String json){
   
   return (response.length() > 12) ? response.substring(9, 12) : "unknown";
 }
+
+void IoT::setConnectionString(String cs){
+  host = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 0), '=', 1));
+  deviceId = GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 1), '=', 1));
+  key = (char*)GetStringValue(splitStringByIndex(splitStringByIndex(cs, ';', 2), '=', 1));
+}
+
+char* IoT::format(const char *input, const char *value){
+  int len = strlen(input) + strlen(value);
+  char *temp = new char[len];
+  sprintf(temp, input, value); 
+  return temp;
+}
+
+char* IoT::format(const char *input, const char *value1, const char *value2){
+  int len = strlen(input) + strlen(value1) + strlen(value2);
+  char *temp = new char[len];
+  sprintf(temp, input, value1, value2); 
+  return temp;
+}
+
+// http://arduino.stackexchange.com/questions/1013/how-do-i-split-an-incoming-string
+String IoT::splitStringByIndex(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = { 0, -1 };
+  int maxIndex = data.length() - 1;
+
+  for (int i = 0; i <= maxIndex && found <= index; i++) {
+    if (data.charAt(i) == separator || i == maxIndex) {
+      found++;
+      strIndex[0] = strIndex[1] + 1;
+      strIndex[1] = (i == maxIndex) ? i + 1 : i;
+    }
+  }
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+
+
 

@@ -14,7 +14,7 @@ void Bmp180::measure(){
 
   initialise();
 
-  _data->temperature = _data->pressure = _data->humidity = 0;
+  temperature = pressure = humidity = 0;
    
   while (sampleCount < numberOfSamples && sampleAttempts < 10) { // no more than 10 attempts to read sensor
 
@@ -22,10 +22,10 @@ void Bmp180::measure(){
     bmp180.getEvent(&event);
    
     if (event.pressure) {      
-      _data->pressure += (int)event.pressure;    
+      pressure += (int)event.pressure;    
       float temperature;
       bmp180.getTemperature(&temperature);
-      _data->temperature += temperature;
+      temperature += temperature;
 
       sampleCount++;
       delay(100);  
@@ -34,8 +34,8 @@ void Bmp180::measure(){
     sampleAttempts++;
   }   
   
-  _data->temperature /= sampleCount;
-  _data->pressure /= sampleCount;  
-  _data->humidity /= sampleCount;  
+  temperature /= sampleCount;
+  pressure /= sampleCount;  
+  humidity /= sampleCount;  
 }
 

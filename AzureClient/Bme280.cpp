@@ -12,17 +12,17 @@ void Bme280::measure(){
   const int numberOfSamples = 4;
 
   initialise();
-  _data->temperature = _data->pressure = _data->humidity = 0;
+  temperature = pressure = humidity = 0;
    
   for (int c = 0; c < numberOfSamples; c++) {  
-    _data->temperature += bme280.readTemperature(); 
-    _data->pressure += (int)((int)( bme280.readPressure() + 0.5) / 100);
-    _data->humidity += bme280.readHumidity();
+    temperature += bme280.readTemperature(); 
+    pressure += (int)((int)( bme280.readPressure() + 0.5) / 100);
+    humidity += bme280.readHumidity();
     delay(500);
   }
   
-  _data->temperature /= numberOfSamples;
-  _data->pressure /= numberOfSamples;  
-  _data->humidity /= numberOfSamples;
+  temperature /= numberOfSamples;
+  pressure /= numberOfSamples;  
+  humidity /= numberOfSamples;
 }
 

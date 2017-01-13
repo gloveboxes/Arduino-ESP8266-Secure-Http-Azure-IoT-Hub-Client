@@ -128,18 +128,21 @@
 #include <ESP8266WiFi.h>
 #include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
-#include "globals.h"        // global structures and enums used by the applocation
 #include "IoTHub.h"
 #include "EventHub.h"
+#include "Sensor.h"
 #include "Bme280.h"
 #include "bmp280.h"
 #include "bmp180.h"
 #include "DhtSensor.h"
+#include "Device.h"
+#include "Led.h"
 
 const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-board;SharedAccessKey=gsadE27VKloflZygS+Pvfye7cnm042uD4vPQdDC1yOE=";
 const char* ssid = "NCW";
 const char* pwd = "malolos5459";
 const char* geo = "sydney";
+BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other).
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
  for information on generating fingerprint
@@ -149,28 +152,35 @@ const char* geo = "sydney";
 */
 const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:8F:8D:1D:92:EB:F1";
 
-CloudConfig cloud;
-DeviceConfig device;
-Telemetry data;
-IoT hub(&cloud);
+
+Device device;
+IoT hub;
 
 /*
  * Uncomment required sensor
  */
 
-Sensor sensor(&data);  // Fake sample environmental data
-//Bmp180 sensor(&data);
-//Bmp280 sensor(&data);
-//Bme280 sensor(&data);
-//DhtSensor sensor(&data, &device, dht11);
-//DhtSensor sensor(&data, &device, dht22);
+//Sensor sensor;  // Fake sample environmental data
+//Bmp180 sensor;
+//Bmp280 sensor;
+Bme280 sensor;
+//DhtSensor sensor(device, dht11);
+//DhtSensor sensor(device, dht22);
 
 IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
+Led led(BUILTIN_LED);
 
 void initDeviceConfig() { // Example device configuration
-  device.boardType = WeMos;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
+  device.boardType = boardType;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  device.publishRateInSeconds = 15;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  device.initCloudConfig(ssid, pwd);
+  
+  hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
+  hub.certificateFingerprint = certificateFingerprint;
+  hub.setConnectionString(connectionString);
+
+  sensor.geo = geo;
 }
 
 void setup() {
@@ -183,13 +193,7 @@ void setup() {
   WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
 
 	initDeviceConfig();
- 
-	initCloudConfig(connectionString, certificateFingerprint, ssid, pwd, geo);
-	
-	//  initCloudConfig();  // alternate signature - read config from EEPROM
-
   initWifi();
-
   getCurrentTime();
 }
 
@@ -197,13 +201,15 @@ void loop() {
   sensor.measure();
 
 	if (WiFi.status() != WL_CONNECTED) {
-    setLedState(Off);
+    led.off();
     initWifi();
     delay(500);
 	}
-	setLedState(On);
-  
-  publishToAzure();
+
+  led.on();
+  String response = hub.send(sensor.toJSON());
+  Serial.println(response);  // response 204 means successful send of data to Azure IoT Hub
+  led.off();
 
   if (device.deepSleepSeconds > 0) {
     WiFi.mode(WIFI_OFF);
@@ -223,22 +229,5 @@ void getCurrentTime(){
   }
 }
 
-void measureSensor(){  // uncomment sensor, default is getFakeWeatherReadings()
-//  getFakeWeatherReadings();
-//  getDht11Readings();
-//  getDht22Readings();
-//  getBmp180Readings();
-//  getBmp280Readings();
-//  getBme280Readings();
-//  getLdrReadings(); // when enabled causes the DHT11 sensor to fail 
-}
 
-void getFakeWeatherReadings() {
-	data.temperature = 25;
-	data.humidity = 50;
-	data.pressure = 1000;
 
-  Serial.println(data.temperature);
-  Serial.println(data.pressure);
-  Serial.println(data.humidity);
-}

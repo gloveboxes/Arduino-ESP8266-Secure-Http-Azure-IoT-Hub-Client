@@ -16,8 +16,8 @@ void DhtSensor::measure(){
   
   do {  
     delay(100);
-    _data->temperature = dht.readTemperature(); 
-    _data->humidity = dht.readHumidity();
-  } while ((isnan(_data->temperature) || isnan(_data->humidity)) && ++retryCount < 20);
+    temperature = dht.readTemperature(); 
+    humidity = dht.readHumidity();
+  } while ((isnan(temperature) || isnan(humidity)) && ++retryCount < 20);
 }
 

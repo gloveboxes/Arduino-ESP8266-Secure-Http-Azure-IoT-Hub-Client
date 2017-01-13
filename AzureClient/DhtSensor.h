@@ -3,6 +3,7 @@
 
 #include "Sensor.h"
 #include "DHT.h"
+#include "Device.h"
 
 enum DhtType {
   dht11 = 11,
@@ -11,9 +12,9 @@ enum DhtType {
 
 class DhtSensor : public Sensor {  
   public:
-    DhtSensor(Telemetry* data, DeviceConfig* device, DhtType dhtType) : Sensor(data){
+    DhtSensor(Device& device, DhtType dhtType) {
       _dhtType = dhtType;
-      device->sensorMode = DhtShieldMode;
+      device.sensorMode = DhtShieldMode;
     };
     void measure();
 

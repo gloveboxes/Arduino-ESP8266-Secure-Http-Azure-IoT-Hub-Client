@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "sha256.h"
 #include "Base64.h"
-#include "globals.h"
 #include "IoTHub.h"
 #include <WiFiClientSecure.h>
 
@@ -12,7 +11,6 @@
 class Eventhub : public IoT
 {
   public:
-    Eventhub(CloudConfig* cloud) : IoT(cloud){};
     String createSas(char* key, String url);
     void initialiseHub();
     
