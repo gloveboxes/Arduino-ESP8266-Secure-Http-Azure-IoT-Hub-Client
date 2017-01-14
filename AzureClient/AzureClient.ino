@@ -124,24 +124,22 @@
 
 */
 
-#include <Wire.h>
+
 #include <ESP8266WiFi.h>
-#include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
-#include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
+#include "Device.h"
 #include "IoTHub.h"
-#include "EventHub.h"
+//#include "EventHub.h"  // uncomment if you plan to publish to Azure Event Bus
 #include "Sensor.h"
 #include "Bme280.h"
 #include "bmp280.h"
 #include "bmp180.h"
 #include "DhtSensor.h"
-#include "Device.h"
 #include "Led.h"
 
-const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-board;SharedAccessKey=gsadE27VKloflZygS+Pvfye7cnm042uD4vPQdDC1yOE=";
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=";
 const char* ssid = "NCW";
 const char* pwd = "malolos5459";
-const char* geo = "sydney";
+const char* geo = "syd-master";
 BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other).
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
@@ -152,8 +150,7 @@ BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunT
 */
 const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:8F:8D:1D:92:EB:F1";
 
-
-Device device;
+Device device(ssid, pwd);
 IoT hub;
 
 /*
@@ -167,14 +164,15 @@ Bme280 sensor;
 //DhtSensor sensor(device, dht11);
 //DhtSensor sensor(device, dht22);
 
-IPAddress timeServer(203, 56, 27, 253); // NTP Server au.pool.ntp.org
-Led led(BUILTIN_LED);
+
+Led led(BUILTIN_LED); 
+
+IPAddress timeServer(62, 237, 86, 238); // Update these with values suitable for your network.
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = boardType;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
-  device.initCloudConfig(ssid, pwd);
   
   hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
   hub.certificateFingerprint = certificateFingerprint;
@@ -188,27 +186,18 @@ void setup() {
 	delay(100);
 	Serial.println("");
 
-  WiFi.mode(WIFI_OFF);
-
-  WiFi.mode(WIFI_STA);  // Ensure WiFi in Station/Client Mode
-
 	initDeviceConfig();
-  initWifi();
+  device.connectWifi();
   getCurrentTime();
 }
 
 void loop() {
   sensor.measure();
 
-	if (WiFi.status() != WL_CONNECTED) {
-    led.off();
-    initWifi();
-    delay(500);
-	}
-
+  device.connectWifi();
+  
   led.on();
-  String response = hub.send(sensor.toJSON());
-  Serial.println(response);  // response 204 means successful send of data to Azure IoT Hub
+  Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
   led.off();
 
   if (device.deepSleepSeconds > 0) {
