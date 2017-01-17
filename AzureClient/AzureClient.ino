@@ -134,12 +134,13 @@
 #include "bmp280.h"
 #include "bmp180.h"
 #include "DhtSensor.h"
-#include "Led.h"
+#include "DigitalPin.h"
+#include "Bme280PS.h"
 
-const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-master;SharedAccessKey=M3zMtx9teF9CtB/ngXfAsOQcTDpT61kOEN42OkMoFYw=";
-const char* ssid = "NCW";
-const char* pwd = "malolos5459";
-const char* geo = "syd-master";
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=wemos02;SharedAccessKey=XdW7gmmd2qnd4gW0qdmS+0k4fsx5Rvy2MUjM4n+Px58=";
+const char* ssid = "dgWAP";
+const char* pwd = "VisualStudio2005";
+const char* geo = "mlb-garage";
 BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other).
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
@@ -160,19 +161,20 @@ IoT hub;
 //Sensor sensor;  // Fake sample environmental data
 //Bmp180 sensor;
 //Bmp280 sensor;
-Bme280 sensor;
+//Bme280 sensor;
+Bme280PS sensor(D5);
 //DhtSensor sensor(device, dht11);
 //DhtSensor sensor(device, dht22);
 
 
-Led led(BUILTIN_LED); 
+DigitalPin led(BUILTIN_LED); 
 
 IPAddress timeServer(62, 237, 86, 238); // Update these with values suitable for your network.
 
 void initDeviceConfig() { // Example device configuration
   device.boardType = boardType;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
   device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  device.publishRateInSeconds = 1;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  device.publishRateInSeconds = 20;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
   
   hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
   hub.certificateFingerprint = certificateFingerprint;
@@ -196,9 +198,9 @@ void loop() {
 
   device.connectWifi();
   
-  led.on();
-  Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
   led.off();
+  Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
+  led.on();
 
   if (device.deepSleepSeconds > 0) {
     WiFi.mode(WIFI_OFF);

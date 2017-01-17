@@ -1,15 +1,15 @@
-#ifndef Led_h
-#define Led_h
+#ifndef DigitalPin_h
+#define DigitalPin_h
 
 
 #include "Arduino.h"
 #include "Device.h"
 
 
-class Led
+class DigitalPin
 {
   public:
-    Led(int pin, bool state = false, BoardType bt = Other);
+    DigitalPin(int pin, bool state = false, BoardType bt = Other);
     void on();
     void off();
     void toggle();

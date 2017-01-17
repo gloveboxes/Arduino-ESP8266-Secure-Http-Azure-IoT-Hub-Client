@@ -1,7 +1,7 @@
 #include "Arduino.h"
-#include "Led.h"
+#include "DigitalPin.h"
 
-Led::Led(int pin, bool state, BoardType bt)
+DigitalPin::DigitalPin(int pin, bool state, BoardType bt)
 {
   _pin = pin;
   _state = state;
@@ -11,17 +11,17 @@ Led::Led(int pin, bool state, BoardType bt)
   if (_state) { on(); } else { off(); }
 }
 
-void Led::on()
+void DigitalPin::on()
 {
   digitalWrite(_pin, HIGH);
 }
 
-void Led::off()
+void DigitalPin::off()
 {
   digitalWrite(_pin, LOW);
 }
 
-void Led::toggle()
+void DigitalPin::toggle()
 {
   _state = !_state;
   if (_state) { on(); } else { off(); }

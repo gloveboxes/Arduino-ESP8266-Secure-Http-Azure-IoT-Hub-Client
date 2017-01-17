@@ -11,7 +11,7 @@ class Bme280 : public Sensor
   public:
     void measure();
 
-  private:
+  protected:
     void initialise();
     Adafruit_BME280  bme280; // I2C
 };
