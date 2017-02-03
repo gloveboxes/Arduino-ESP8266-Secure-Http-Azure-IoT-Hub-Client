@@ -85,11 +85,10 @@
 
     // device configuration in this Arduino Sketch
     void initDeviceConfig(){
-      device.boardType = Other;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for wifi and publish status. Other means no LED status 
       device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
       cloud.cloudMode = IoTHub;            // CloudMode enumeration: IoTHub and EventHub (default is IoTHub)
       cloud.publishRateInSeconds = 90;     // limits publishing rate to specified seconds (default is 90 seconds)
-      cloud.sasExpiryDate = 1737504000;    // Expires Wed, 22 Jan 2025 00:00:00 GMT (defaults to Expires Wed, 22 Jan 2025 00:00:00 GMT)
+      hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
     }
 
 
@@ -101,7 +100,7 @@
 
   ESP8266 ARDUINO IDE SUPPORT:
 
-  1. Install Arduino 1.6.5 from the Arduino website.
+  1. Install the latest Arduino 1.8.1 as at Jan 2017 from the Arduino website.
   2. Start Arduino and open Preferences window.
   3. Enter http://arduino.esp8266.com/stable/package_esp8266com_index.json into Additional Board Manager URLs field. You can add multiple URLs, separating them with commas.
   4. RESTART Arduino IDE
@@ -135,13 +134,14 @@
 #include "bmp180.h"
 #include "DhtSensor.h"
 #include "DigitalPin.h"
-#include "Bme280PS.h"
+#include "Ldr.h"
 
-const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=wemos02;SharedAccessKey=XdW7gmmd2qnd4gW0qdmS+0k4fsx5Rvy2MUjM4n+Px58=";
-const char* ssid = "dgWAP";
-const char* pwd = "VisualStudio2005";
-const char* geo = "mlb-garage";
-BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other).
+
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-balcony;SharedAccessKey=LZGN+WwSV8cliaTLZ5fiU9QtyPawp92gyjgznpFLB64=";
+const char* wifi_ssid = "NCW";
+const char* wifi_pwd = "malolos5459";
+const char* deviceLocation = "syd-balcony";
+
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
  for information on generating fingerprint
@@ -151,36 +151,41 @@ BoardType boardType = WeMos; // BoardType enumeration: NodeMCU, WeMos, SparkfunT
 */
 const char* certificateFingerprint = "38:5C:47:B1:97:DA:34:57:BB:DD:E7:7C:B9:11:8F:8D:1D:92:EB:F1";
 
-Device device(ssid, pwd);
+Device device(wifi_ssid, wifi_pwd);
 IoT hub;
 
-/*
- * Uncomment required sensor
- */
+
+DigitalPin led(BUILTIN_LED, false, true); // initial state is off (false), invert true = high turns led off
+DigitalPin powerPin(D5);
+
+// uncomment required sensor
 
 //Sensor sensor;  // Fake sample environmental data
 //Bmp180 sensor;
+//Bmp180 sensor(&powerPin);
+
 //Bmp280 sensor;
+//Bmp280 sensor(&powerPin);
+
 //Bme280 sensor;
-Bme280PS sensor(D5);
+Bme280 sensor(&powerPin);
+
 //DhtSensor sensor(device, dht11);
 //DhtSensor sensor(device, dht22);
+Ldr ldr;
 
-
-DigitalPin led(BUILTIN_LED); 
 
 IPAddress timeServer(62, 237, 86, 238); // Update these with values suitable for your network.
 
 void initDeviceConfig() { // Example device configuration
-  device.boardType = boardType;            // BoardType enumeration: NodeMCU, WeMos, SparkfunThing, Other (defaults to Other). This determines pin number of the onboard LED for publish status. Other means no LED status 
-  device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
-  device.publishRateInSeconds = 20;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
+  device.deepSleepSeconds = 120;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+  device.publishRateInSeconds = 4;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
   
   hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
   hub.certificateFingerprint = certificateFingerprint;
   hub.setConnectionString(connectionString);
 
-  sensor.geo = geo;
+  sensor.geo = deviceLocation;
 }
 
 void setup() {
@@ -191,16 +196,20 @@ void setup() {
 	initDeviceConfig();
   device.connectWifi();
   getCurrentTime();
+
 }
 
 void loop() {
   sensor.measure();
+//  powerPin.on();
+//  sensor.light = ldr.measure();
+//  powerPin.off();
 
   device.connectWifi();
   
-  led.off();
-  Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
   led.on();
+  Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
+  led.off();
 
   if (device.deepSleepSeconds > 0) {
     WiFi.mode(WIFI_OFF);

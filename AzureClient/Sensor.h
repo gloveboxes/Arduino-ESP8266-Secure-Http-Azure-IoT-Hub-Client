@@ -5,11 +5,17 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>    // https://github.com/bblanchon/ArduinoJson - installed via library manager
 #include <TimeLib.h>           // http://playground.arduino.cc/code/time - installed via library manager
-
+#include "DigitalPin.h"
 
 class Sensor
 {
   public:
+    Sensor(){};
+    Sensor(DigitalPin *powerPin){
+      _powerPin = powerPin;
+      usingPowerPin = true;
+    }   
+    
     void measure();    
     char* toJSON();
 
@@ -22,11 +28,27 @@ class Sensor
 
   protected:
     bool initialised;
+    
+    bool powerOn(){
+      if (usingPowerPin) { 
+        _powerPin->on();
+        delay(50);
+      }
+      return initialised && !usingPowerPin;
+    }
 
-  private:
+     void powerOff(){
+      if (!usingPowerPin) { return; }
+      _powerPin->off();
+    }   
+   
+
+  private:    
     char buffer[256];
     char isoTime[30];
     char* getISODateTime();
+    DigitalPin *_powerPin;
+    bool usingPowerPin = false;
 };
 
 #endif

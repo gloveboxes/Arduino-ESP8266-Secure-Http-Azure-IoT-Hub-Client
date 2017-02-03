@@ -9,10 +9,12 @@
 class Bmp280 : public Sensor
 {
   public:
+    Bmp280(){};
+    Bmp280(DigitalPin *powerPin):Sensor(powerPin){};
     void measure();
 
   private:
-    void initialise();
+    void initialise();  
     Adafruit_BMP280  bmp280; // I2C
 };
 

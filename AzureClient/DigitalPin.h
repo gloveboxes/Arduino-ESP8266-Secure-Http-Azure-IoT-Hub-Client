@@ -9,15 +9,25 @@
 class DigitalPin
 {
   public:
-    DigitalPin(int pin, bool state = false, BoardType bt = Other);
+    DigitalPin(){};
+    DigitalPin(int pin, bool state = false, bool invert = false)
+    {
+      _pin = pin;
+      _state = state;
+      _invert = invert;
+      
+      pinMode(_pin, OUTPUT);
+      if (_state) { on(); } else { off(); }
+    }
     void on();
     void off();
     void toggle();
+    int _pin;
     
   private:
-    int _pin;
+    
     bool _state;
-    BoardType _bt;
+    bool _invert;
 };
 
 #endif

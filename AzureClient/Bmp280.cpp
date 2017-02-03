@@ -2,7 +2,7 @@
 
 
 void Bmp280::initialise(){
-  if (initialised) { return; }  
+  if (powerOn()) {return;}
   bmp280.begin();
   delay(100);  
   initialised = true;
@@ -23,5 +23,7 @@ void Bmp280::measure(){
   
   temperature /= numberOfSamples;
   pressure /= numberOfSamples;  
+
+  powerOff();
 }
 

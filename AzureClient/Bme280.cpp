@@ -2,7 +2,7 @@
 
 
 void Bme280::initialise(){
-  if (initialised) { return; }  
+  if (powerOn()) {return;}
   bme280.begin(0x76);  
   delay(100);  
   initialised = true;
@@ -24,5 +24,7 @@ void Bme280::measure(){
   temperature /= numberOfSamples;
   pressure /= numberOfSamples;  
   humidity /= numberOfSamples;
+
+  powerOff();
 }
 

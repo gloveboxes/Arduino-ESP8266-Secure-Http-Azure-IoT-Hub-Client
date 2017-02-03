@@ -2,7 +2,7 @@
 
 
 void Bmp180::initialise(){
-  if (initialised) { return; }  
+  if (powerOn()) {return;}
   bmp180.begin(); 
   delay(100);  
   initialised = true;
@@ -21,12 +21,13 @@ void Bmp180::measure(){
     sensors_event_t event;
     bmp180.getEvent(&event);
    
-    if (event.pressure) {      
+    if (event.pressure) {
       pressure += (int)event.pressure;    
-      float temperature;
-      bmp180.getTemperature(&temperature);
-      temperature += temperature;
-
+      
+      float temp;
+      bmp180.getTemperature(&temp);
+      temperature += temp;
+      
       sampleCount++;
       delay(100);  
     }
@@ -35,7 +36,8 @@ void Bmp180::measure(){
   }   
   
   temperature /= sampleCount;
-  pressure /= sampleCount;  
-  humidity /= sampleCount;  
+  pressure /= sampleCount;
+
+  powerOff();
 }
 
