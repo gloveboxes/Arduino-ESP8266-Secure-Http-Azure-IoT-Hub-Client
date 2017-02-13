@@ -135,12 +135,12 @@
 #include "DhtSensor.h"
 #include "DigitalPin.h"
 #include "Ldr.h"
+#include "OLED.h"
 
-
-const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-balcony;SharedAccessKey=LZGN+WwSV8cliaTLZ5fiU9QtyPawp92gyjgznpFLB64=";
+const char* connectionString = "HostName=IoTCampAU.azure-devices.net;DeviceId=syd-solar;SharedAccessKey=vbCneLEizMZ2x4PBDehd8BsvhHoUEqLU2mcZ2oQxXr8=";
 const char* wifi_ssid = "NCW";
 const char* wifi_pwd = "malolos5459";
-const char* deviceLocation = "syd-balcony";
+const char* deviceLocation = "syd-solor";
 
 /* 
  http://hassansin.github.io/certificate-pinning-in-nodejs
@@ -161,24 +161,26 @@ DigitalPin powerPin(D5);
 // uncomment required sensor
 
 //Sensor sensor;  // Fake sample environmental data
-//Bmp180 sensor;
+Bmp180 sensor;
 //Bmp180 sensor(&powerPin);
 
 //Bmp280 sensor;
 //Bmp280 sensor(&powerPin);
 
 //Bme280 sensor;
-Bme280 sensor(&powerPin);
+//Bme280 sensor(&powerPin);
 
 //DhtSensor sensor(device, dht11);
 //DhtSensor sensor(device, dht22);
 Ldr ldr;
 
+OLED display(&sensor);
+
 
 IPAddress timeServer(62, 237, 86, 238); // Update these with values suitable for your network.
 
 void initDeviceConfig() { // Example device configuration
-  device.deepSleepSeconds = 120;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
+  device.deepSleepSeconds = 0;         // if greater than zero with call ESP8266 deep sleep (default is 0 disabled). GPIO16 needs to be tied to RST to wake from deepSleep. Causes a reset, execution restarts from beginning of sketch
   device.publishRateInSeconds = 4;     // limits publishing rate to specified seconds (default is 90 seconds).  Connectivity problems may result if number too small eg 2
   
   hub.sasExpiryPeriodInSeconds = 15 * 60; // Renew Sas Token every 15 minutes
@@ -205,11 +207,13 @@ void loop() {
 //  sensor.light = ldr.measure();
 //  powerPin.off();
 
+  display.updateDisplay();
+
   device.connectWifi();
   
-  led.on();
+//  led.on();
   Serial.println(hub.send(sensor.toJSON())); // response 204 means successful send of data to Azure IoT Hub
-  led.off();
+//  led.off();
 
   if (device.deepSleepSeconds > 0) {
     WiFi.mode(WIFI_OFF);
