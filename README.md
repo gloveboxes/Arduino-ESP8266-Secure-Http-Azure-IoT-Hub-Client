@@ -1,5 +1,7 @@
 # Securely stream data from ESP8266 MCUs to Azure IoT Hub over HTTPS/REST
 
+**This version has been superseded by [Arduino ESP8266 Secure Http Azure IoT Hub Client V2](https://github.com/gloveboxes/Arduino-ESP8266-Secure-Http-Azure-IoT-Hub-Client-V2)**
+
 ### Purpose
 
 This solution securely streams sensor data directly to 
