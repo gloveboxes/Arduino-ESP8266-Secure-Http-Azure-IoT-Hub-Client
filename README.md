@@ -1,8 +1,9 @@
-# Superceded
+# New Version - Version 2
 
-**This version has been superseded by [Arduino ESP8266 Secure Http Azure IoT Hub Client V2](https://gloveboxes.github.io/Arduino-ESP8266-Secure-Http-Azure-IoT-Hub-Client-V2/)**
+**Head to [Arduino ESP8266 Secure Azure IoT Hub Client V2](https://gloveboxes.github.io/Arduino-ESP8266-Secure-Http-Azure-IoT-Hub-Client-V2/)**
 
 
+# Superceded Version
 
 ## Securely stream data from ESP8266 MCUs to Azure IoT Hub over HTTPS/REST
 
